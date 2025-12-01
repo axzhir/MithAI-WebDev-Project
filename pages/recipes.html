@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cookbook - MithAI</title>
+    <link rel="icon" type="image/png" href="../../images/logo.png">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="../styles/style.css">
+</head>
+
+<body class="bg-light text-dark">
+    <nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top border-bottom">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center gap-2" href="index.html">
+                <img src="../../images/logo.png" alt="MithAI Logo" height="40">
+                <span class="fw-bold font-serif">Mith<span class="text-orange">AI</span></span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item"><a class="nav-link" href="index.html">Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="recipes.html">Recipes</a></li>
+                    <li class="nav-item"><a class="nav-link" href="stats.html">Insights</a></li>
+                    <li class="nav-item"><a class="nav-link" href="about.html">About</a></li>
+                    <li class="nav-item ms-2"><a href="create-recipe.html"
+                            class="btn btn-dark rounded-pill px-4 hover-orange">New Recipe</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container py-5">
+        <div class="row">
+            <div class="col-lg-3 mb-4">
+                <div class="card border-0 shadow-sm p-3">
+                    <h5 class="font-serif fw-bold mb-3">Organize By</h5>
+
+                    <div class="mb-4">
+                        <input type="text" id="searchInput" class="form-control bg-light border-0"
+                            placeholder="Search...">
+                    </div>
+
+                    <h6 class="fw-bold text-orange text-uppercase small mb-2">Culture / Cuisine</h6>
+                    <div class="list-group list-group-flush mb-4" id="cuisineFilters">
+                        <button type="button" class="list-group-item list-group-item-action all-filter active"
+                            onclick="filterRecipes('all', 'cuisine', this, 'cuisineFilters')">All Cuisines</button>
+                        <button type="button" class="list-group-item list-group-item-action"
+                            onclick="filterRecipes('South Asian', 'cuisine', this, 'cuisineFilters')">South
+                            Asian</button>
+                        <button type="button" class="list-group-item list-group-item-action"
+                            onclick="filterRecipes('Western', 'cuisine', this, 'cuisineFilters')">Western</button>
+                        <button type="button" class="list-group-item list-group-item-action"
+                            onclick="filterRecipes('Korean', 'cuisine', this, 'cuisineFilters')">Korean</button>
+                        <button type="button" class="list-group-item list-group-item-action"
+                            onclick="filterRecipes('African', 'cuisine', this, 'cuisineFilters')">African</button>
+                    </div>
+
+                    <h6 class="fw-bold text-orange text-uppercase small mb-2">Meal Type</h6>
+                    <div class="list-group list-group-flush" id="typeFilters">
+                        <button type="button" class="list-group-item list-group-item-action all-filter active"
+                            onclick="filterRecipes('all', 'type', this, 'typeFilters')">All Types</button>
+                        <button type="button" class="list-group-item list-group-item-action"
+                            onclick="filterRecipes('Breakfast', 'type', this, 'typeFilters')">Breakfast</button>
+                        <button type="button" class="list-group-item list-group-item-action"
+                            onclick="filterRecipes('Lunch', 'type', this, 'typeFilters')">Lunch</button>
+                        <button type="button" class="list-group-item list-group-item-action"
+                            onclick="filterRecipes('Dinner', 'type', this, 'typeFilters')">Dinner</button>
+                        <button type="button" class="list-group-item list-group-item-action"
+                            onclick="filterRecipes('Snack', 'type', this, 'typeFilters')">Snacks</button>
+                        <button type="button" class="list-group-item list-group-item-action"
+                            onclick="filterRecipes('Dessert', 'type', this, 'typeFilters')">Desserts</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-9">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h1 class="font-serif fw-bold m-0">My Cookbook</h1>
+                    <span class="text-muted small" id="resultCount">Showing all recipes</span>
+                </div>
+
+                <div id="recipe-grid" class="row g-4">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../scripts/script.js"></script>
+</body>
+
+</html>

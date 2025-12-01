@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Recipe - MithAI</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="styles/style.css">
+</head>
+
+<body class="bg-light text-dark theme-pakistan">
+    <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center gap-2" href="index.html">
+                <img src="../images/logo.png" alt="MithAI Logo" height="36">
+                <span class="fw-bold font-serif">Mith<span class="text-orange">AI</span></span>
+            </a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="index.html">Cancel</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container py-5 create-form-container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="font-serif fw-bold">New Recipe</h1>
+            <div class="d-flex gap-2">
+                <button type="button" onclick="demoAIFill()" class="btn btn-dark rounded-pill px-4">
+                    <i class="fas fa-magic me-2"></i> Auto-Fill with AI (Demo)
+                </button>
+                <button type="button" onclick="generateAIRecipe('', true)"
+                    class="btn btn-outline-dark rounded-pill px-4">
+                    <i class="fas fa-robot me-2"></i> Generate &amp; Save AI
+                </button>
+            </div>
+        </div>
+        <form class="bg-white p-5 rounded-4 shadow-sm border" onsubmit="handleRecipeSubmit(event)">
+            <div class="mb-3">
+                <label for="title" class="form-label fw-bold">Recipe Title</label>
+                <input type="text" class="form-control" id="title" required placeholder="e.g., Spicy Chicken Karahi">
+            </div>
+
+            <div class="mb-3">
+                <label for="desc" class="form-label fw-bold">Description</label>
+                <textarea class="form-control" id="desc" rows="2" required></textarea>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="cuisine" class="form-label fw-bold">Cuisine (Culture)</label>
+                    <select class="form-select" id="cuisine">
+                        <option value="General">General</option>
+                        <option value="South Asian">South Asian</option>
+                        <option value="Western">Western</option>
+                        <option value="Korean">Korean</option>
+                        <option value="African">African</option>
+                        <option value="Middle Eastern">Middle Eastern</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label for="mealType" class="form-label fw-bold">Meal Type</label>
+                    <select class="form-select" id="mealType">
+                        <option value="Dinner">Dinner</option>
+                        <option value="Lunch">Lunch</option>
+                        <option value="Breakfast">Breakfast</option>
+                        <option value="Snack">Snack</option>
+                        <option value="Dessert">Dessert</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="ingredients" class="form-label fw-bold">Ingredients (Comma separated)</label>
+                <textarea class="form-control" id="ingredients" rows="3"
+                    placeholder="Chicken, Tomatoes, Salt..."></textarea>
+            </div>
+
+            <div class="mb-3">
+                <label for="instructions" class="form-label fw-bold">Instructions (One step per line)</label>
+                <textarea class="form-control" id="instructions" rows="4"
+                    placeholder="1. Fry the chicken..."></textarea>
+            </div>
+
+            <div class="d-flex justify-content-end gap-2">
+                <button type="submit" class="btn btn-dark">Save Recipe</button>
+            </div>
+        </form>
+    </div>
+    <script src="scripts/script.js"></script>
+</body>
+
+</html>
