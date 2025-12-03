@@ -113,3 +113,9 @@ body {
     display: block;
     object-fit: cover;
 }
+
+/* Ensure Start Cooking button is above any stretched links */
+#start-cooking {
+    position: relative;
+    z-index: 10;
+}

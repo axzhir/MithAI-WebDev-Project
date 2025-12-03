@@ -1,0 +1,21 @@
+Milestone Goals:
+
+Fully implement your app, using the base static site you created in Milestone 2
+All CRUD actions must be supported
+Data must be persisted to localStorage or IndexedDB
+You must also have a way to import/export or share data (see detailed instructions)
+Your app should interact with at least one external API
+You must demonstrate your knowledge of asynchronous JavaScript
+Such as multiple chained API calls or other asynchronous code
+Or multiple calls that execute concurrently
+Don't forget to use a browser-ready, client-side JavaScript library
+See Awesome JavaScriptLinks to an external site. (anything from the "Files" section onwards)
+You're looking for "browser-ready" libraries; avoid anything that uses "npm" or "node", etc.
+
+Bugs to Fix:
+
+make the recipes filter out based on tag
+fix the AI generation
+Fix the API code
+Check to see if it passes WAVE
+Push to generation
