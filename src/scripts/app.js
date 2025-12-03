@@ -1,4 +1,4 @@
-// --- MithAI Application Main Script ---
+// --- MiTHAI Application Main Script ---
 // This file handles all application logic, including data management,
 // UI rendering, and event handling.
 
@@ -63,7 +63,7 @@ async function fetchApiRecipes() {
 // --- 3. INITIALIZATION & ROUTING ---
 
 document.addEventListener('DOMContentLoaded', async () => {
-    console.log("MithAI App Initializing...");
+    console.log("MiTHAI App Initializing...");
 
     // Immediately display loading spinners where needed
     if (document.getElementById('recent-recipes-container')) showLoading('recent-recipes-container');
