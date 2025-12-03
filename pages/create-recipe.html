@@ -7,7 +7,7 @@
     <title>New Recipe - MithAI</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="styles/style.css">
+    <link rel="stylesheet" href="../styles/style.css">
 </head>
 
 <body class="bg-light text-dark theme-pakistan">
@@ -26,13 +26,10 @@
     <div class="container py-5 create-form-container">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h1 class="font-serif fw-bold">New Recipe</h1>
-            <div class="d-flex gap-2">
-                <button type="button" onclick="demoAIFill()" class="btn btn-dark rounded-pill px-4">
-                    <i class="fas fa-magic me-2"></i> Auto-Fill with AI (Demo)
-                </button>
-                <button type="button" onclick="generateAIRecipe('', true)"
-                    class="btn btn-outline-dark rounded-pill px-4">
-                    <i class="fas fa-robot me-2"></i> Generate &amp; Save AI
+            <div>
+                <button type="button" id="ai-generate-btn" onclick="generateAIRecipe()"
+                    class="btn btn-dark rounded-pill px-4">
+                    <i class="fas fa-magic me-2"></i> Generate with AI
                 </button>
             </div>
         </div>
@@ -52,9 +49,10 @@
                     <label for="cuisine" class="form-label fw-bold">Cuisine (Culture)</label>
                     <select class="form-select" id="cuisine">
                         <option value="General">General</option>
+                        <option value="East Asian">East Asian</option>
                         <option value="South Asian">South Asian</option>
                         <option value="Western">Western</option>
-                        <option value="Korean">Korean</option>
+                        <option value="European">European</option>
                         <option value="African">African</option>
                         <option value="Middle Eastern">Middle Eastern</option>
                     </select>
@@ -88,7 +86,7 @@
             </div>
         </form>
     </div>
-    <script src="scripts/script.js"></script>
+    <script src="../scripts/script.js"></script>
 </body>
 
 </html>

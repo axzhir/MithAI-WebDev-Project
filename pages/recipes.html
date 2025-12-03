@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cookbook - MithAI</title>
-    <link rel="icon" type="image/png" href="../../images/logo.png">
+    <link rel="icon" type="image/png" href="../images/logo.png">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="../styles/style.css">
@@ -15,7 +15,7 @@
     <nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top border-bottom">
         <div class="container">
             <a class="navbar-brand d-flex align-items-center gap-2" href="index.html">
-                <img src="../../images/logo.png" alt="MithAI Logo" height="40">
+                <img src="../images/logo.png" alt="MithAI Logo" height="40">
                 <span class="fw-bold font-serif">Mith<span class="text-orange">AI</span></span>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
@@ -49,16 +49,21 @@
                     <h6 class="fw-bold text-orange text-uppercase small mb-2">Culture / Cuisine</h6>
                     <div class="list-group list-group-flush mb-4" id="cuisineFilters">
                         <button type="button" class="list-group-item list-group-item-action all-filter active"
-                            onclick="filterRecipes('all', 'cuisine', this, 'cuisineFilters')">All Cuisines</button>
+                            onclick="filterRecipes('all', 'cuisine')">All Cuisines</button>
                         <button type="button" class="list-group-item list-group-item-action"
-                            onclick="filterRecipes('South Asian', 'cuisine', this, 'cuisineFilters')">South
-                            Asian</button>
+                            onclick="filterRecipes('General', 'cuisine')">General</button>
                         <button type="button" class="list-group-item list-group-item-action"
-                            onclick="filterRecipes('Western', 'cuisine', this, 'cuisineFilters')">Western</button>
+                            onclick="filterRecipes('East Asian', 'cuisine')">East Asian</button>
                         <button type="button" class="list-group-item list-group-item-action"
-                            onclick="filterRecipes('Korean', 'cuisine', this, 'cuisineFilters')">Korean</button>
+                            onclick="filterRecipes('South Asian', 'cuisine')">South Asian</button>
                         <button type="button" class="list-group-item list-group-item-action"
-                            onclick="filterRecipes('African', 'cuisine', this, 'cuisineFilters')">African</button>
+                            onclick="filterRecipes('Western', 'cuisine')">Western</button>
+                        <button type="button" class="list-group-item list-group-item-action"
+                            onclick="filterRecipes('European', 'cuisine')">European</button>
+                        <button type="button" class="list-group-item list-group-item-action"
+                            onclick="filterRecipes('African', 'cuisine')">African</button>
+                        <button type="button" class="list-group-item list-group-item-action"
+                            onclick="filterRecipes('Middle Eastern', 'cuisine')">Middle Eastern</button>
                     </div>
 
                     <h6 class="fw-bold text-orange text-uppercase small mb-2">Meal Type</h6>
@@ -92,7 +97,65 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="../scripts/script.js"></script>
+    <!-- Note: The main script.js is not needed here as it's for the create-recipe page -->
+    <script>
+        let allRecipes = []; // To store all recipes for filtering
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const recipeGrid = document.getElementById('recipe-grid');
+            const resultCount = document.getElementById('resultCount');
+
+            allRecipes = JSON.parse(localStorage.getItem('mithai-recipes')) || [];
+
+            renderRecipes(allRecipes);
+        });
+
+        function renderRecipes(recipes) {
+            const recipeGrid = document.getElementById('recipe-grid');
+            const resultCount = document.getElementById('resultCount');
+            recipeGrid.innerHTML = ''; // Clear existing recipes
+
+            if (recipes.length === 0) {
+                recipeGrid.innerHTML = `
+                    <div class="col-12 text-center py-5 text-muted">
+                        <p class="lead">No recipes found.</p>
+                        <p>Try adjusting your filters or <a href="create-recipe.html">create a new recipe</a>.</p>
+                    </div>
+                `;
+                resultCount.textContent = 'Showing 0 recipes';
+                return;
+            }
+
+            recipes.forEach(recipe => {
+                const cardHtml = `
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <div class="card h-100 shadow-sm">
+                            <div class="card-body d-flex flex-column">
+                                <h5 class="card-title font-serif fw-bold">${recipe.title}</h5>
+                                <p class="card-text text-muted small flex-grow-1">${recipe.description.substring(0, 100)}...</p>
+                                <div>
+                                    <span class="badge bg-secondary me-1">${recipe.cuisine}</span>
+                                    <span class="badge bg-info text-dark">${recipe.mealType}</span>
+                                </div>
+                                <a href="recipe.html?id=${recipe.id}" class="btn btn-sm btn-outline-dark mt-3 stretched-link">View Recipe</a>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                recipeGrid.insertAdjacentHTML('beforeend', cardHtml);
+            });
+
+            resultCount.textContent = `Showing ${recipes.length} recipes`;
+        }
+
+        // This is a placeholder for your filter logic. The inline `onclick` attributes
+        // in your HTML are complex and a more modern approach would be to handle this
+        // with event listeners here. For now, this will get your recipes showing.
+        function filterRecipes(filterValue, filterType, element, containerId) {
+            // This function is intentionally left simple for now.
+            alert(`Filtering by ${filterType}: ${filterValue}. \n(Full filter logic needs to be implemented)`);
+        }
+    </script>
 </body>
 
 </html>

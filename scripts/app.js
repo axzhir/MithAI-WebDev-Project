@@ -11,25 +11,14 @@ let GLOBAL_RECIPES = [];
 
 const DEFAULT_DATA = [
     {
-        id: 'default-1',
-        title: "Indian Butter Chicken",
-        cuisine: "South Asian",
-        mealType: "Dinner",
-        desc: "A rich, creamy tomato-based curry with tender chicken.",
-        image: "https://www.themealdb.com/images/media/meals/uryqmg1511798439.jpg",
-        ingredients: ["500g Chicken", "2 tbsp Butter", "1 cup Tomato Puree"],
-        instructions: ["Marinate chicken.", "Cook sauce.", "Combine."],
-        type: 'static'
-    },
-    {
-        id: 'default-2',
-        title: "Classic Pancakes",
-        cuisine: "Western",
-        mealType: "Breakfast",
-        desc: "Fluffy breakfast pancakes served with syrup.",
-        image: "https://www.themealdb.com/images/media/meals/rwuyqx1511383174.jpg",
-        ingredients: ["2 cups Flour", "2 Eggs", "1.5 cups Milk"],
-        instructions: ["Mix batter.", "Fry on pan.", "Serve."],
+        id: 'default-bread',
+        title: "Bread",
+        cuisine: "General",
+        mealType: "Staple",
+        desc: "A simple, classic loaf of homemade bread.",
+        image: "https://www.themealdb.com/images/media/meals/wprvrw1511641295.jpg",
+        ingredients: ["500g Strong White Flour", "7g Dried Yeast", "1 tsp Salt", "300ml Warm Water"],
+        instructions: ["Mix flour, yeast, and salt in a large bowl.", "Make a well in the center and pour in the warm water.", "Mix until you have a soft, sticky dough.", "Knead for 10 minutes on a floured surface until smooth.", "Place in a lightly oiled bowl, cover, and let rise for 1 hour.", "Bake at 220C (425F) for 25-30 minutes."],
         type: 'static'
     }
 ];
