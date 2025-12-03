@@ -6,6 +6,7 @@
 const API_URL = "https://www.themealdb.com/api/json/v1/1/search.php?s=";
 const PLACEHOLDER_IMAGE = '/images/butterchicken.png';
 let GLOBAL_RECIPES = [];
+let GLOBAL_REMIXES = [];
 
 // --- 2. DATA HANDLING ---
 
@@ -31,6 +32,26 @@ function getLocalRecipes() {
     } catch (e) {
         console.error("Local Storage Corrupted:", e);
         return [];
+    }
+}
+
+function getLocalRemixes() {
+    try {
+        const stored = localStorage.getItem('mithai-remixes') || localStorage.getItem('mithai_remixes');
+        return stored ? JSON.parse(stored) : [];
+    } catch (e) {
+        console.error("Local Remix Storage Corrupted:", e);
+        return [];
+    }
+}
+
+function saveRemixToLocal(remix) {
+    try {
+        const current = getLocalRemixes();
+        current.push(remix);
+        localStorage.setItem('mithai-remixes', JSON.stringify(current));
+    } catch (e) {
+        alert("Could not save remix. LocalStorage might be full or disabled.");
     }
 }
 
@@ -72,6 +93,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     try {
         // 1. Load Local & Default data for an instant UI
         const localMeals = getLocalRecipes();
+        const localRemixes = GLOBAL_REMIXES = getLocalRemixes();
         GLOBAL_RECIPES = [...localMeals, ...DEFAULT_DATA];
         refreshAllViews(); // Initial render
 
@@ -122,6 +144,10 @@ function refreshAllViews() {
     }
     if (document.getElementById('cuisineChart')) {
         initChart(GLOBAL_RECIPES);
+    }
+    // Stats page
+    if (document.getElementById('stats-root')) {
+        initStats(GLOBAL_RECIPES, GLOBAL_REMIXES);
     }
 }
 
@@ -252,9 +278,23 @@ window.handleRecipeSubmit = function (e) {
 
 window.handleRemixSubmit = function (e) {
     e.preventDefault();
-    // In a real app, you would save the remixed recipe here.
-    alert("Remix Saved!");
-    window.location.href = 'recipes.html';
+    try {
+        const params = new URLSearchParams(window.location.search);
+        const parentId = params.get('parentId') || document.getElementById('parentId')?.value || null;
+        const remix = {
+            id: Date.now(),
+            parentId,
+            title: document.getElementById('remixTitle')?.value || 'Untitled Remix',
+            changesLog: document.getElementById('remixLog')?.value || '',
+            rating: parseInt(document.getElementById('remixRating')?.value || '0', 10) || 0,
+            dateCreated: new Date().toISOString()
+        };
+        saveRemixToLocal(remix);
+        alert("Remix Saved!");
+        window.location.href = 'recipes.html';
+    } catch (err) {
+        alert("Error saving remix: " + err.message);
+    }
 };
 
 window.demoAIFill = function () {
@@ -277,16 +317,21 @@ window.demoAIFill = function () {
 window.clearData = function () {
     if (confirm("Delete all local data?")) {
         localStorage.removeItem('mithai_recipes');
+        localStorage.removeItem('mithai-recipes');
+        localStorage.removeItem('mithai-remixes');
+        localStorage.removeItem('mithai_remixes');
         window.location.reload();
     }
 };
 
 window.exportData = function () {
-    const data = getLocalRecipes();
-    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data));
+    const recipes = getLocalRecipes();
+    const remixes = getLocalRemixes();
+    const payload = { recipes, remixes, exportedAt: new Date().toISOString() };
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(payload, null, 2));
     const anchor = document.createElement('a');
     anchor.setAttribute("href", dataStr);
-    anchor.setAttribute("download", "my_recipes.json");
+    anchor.setAttribute("download", "mithai-data.json");
     document.body.appendChild(anchor);
     anchor.click();
     anchor.remove();
@@ -398,4 +443,88 @@ async function ensureImageAvailable(url, title) {
 
     // 3. Fallback to the placeholder
     return PLACEHOLDER_IMAGE;
+}
+
+// --- 6. ANALYTICS / STATS ---
+function initStats(recipes, remixes) {
+    try {
+        // 1) Most used ingredient across recipes
+        const freq = {};
+        (recipes || []).forEach(r => {
+            const list = Array.isArray(r.ingredients) ? r.ingredients : [];
+            list.forEach(raw => {
+                const name = String(raw || '')
+                    .toLowerCase()
+                    .replace(/[^a-z\s]/g, '')
+                    .trim();
+                if (!name) return;
+                freq[name] = (freq[name] || 0) + 1;
+            });
+        });
+        const mostIngredient = Object.entries(freq).sort((a, b) => b[1] - a[1])[0]?.[0] || '—';
+        const elIng = document.getElementById('stat-most-ingredient');
+        if (elIng) elIng.textContent = capitalizeWords(mostIngredient);
+
+        // 2) Remix ratings
+        const byRecipe = {};
+        (remixes || []).forEach(rx => {
+            if (!rx.parentId) return;
+            byRecipe[rx.parentId] = byRecipe[rx.parentId] || { sum: 0, n: 0 };
+            byRecipe[rx.parentId].sum += Number(rx.rating || 0);
+            byRecipe[rx.parentId].n += 1;
+        });
+        const avgAcross = Object.values(byRecipe).reduce((acc, v) => acc + (v.n ? v.sum / v.n : 0), 0);
+        const avgRating = (Object.keys(byRecipe).length ? (avgAcross / Object.keys(byRecipe).length) : 0).toFixed(2);
+        const elAvg = document.getElementById('stat-avg-rating');
+        if (elAvg) elAvg.textContent = (remixes && remixes.length) ? `${avgRating}/5` : 'No remixes yet';
+
+        // 3) Top rated recipe (by average of its remixes)
+        let best = null;
+        Object.entries(byRecipe).forEach(([id, v]) => {
+            const avg = v.sum / v.n;
+            if (!best || avg > best.avg) best = { id, avg };
+        });
+        const titleMap = Object.fromEntries((recipes || []).map(r => [String(r.id), r.title]));
+        const elTop = document.getElementById('stat-top-recipe');
+        if (elTop) elTop.textContent = best ? `${titleMap[best.id] || 'Unknown'} (${best.avg.toFixed(2)}/5)` : 'No ratings yet';
+
+        // 4) Most common remix change keyword
+        const changeKeywords = ['added', 'reduced', 'increased', 'removed', 'substituted', 'swapped', 'replaced'];
+        const changeFreq = {};
+        (remixes || []).forEach(rx => {
+            const log = String(rx.changesLog || '').toLowerCase();
+            changeKeywords.forEach(k => { if (log.includes(k)) changeFreq[k] = (changeFreq[k] || 0) + 1; });
+        });
+        const common = Object.entries(changeFreq).sort((a, b) => b[1] - a[1])[0]?.[0] || '—';
+        const elCommon = document.getElementById('stat-common-change');
+        if (elCommon) elCommon.textContent = common === '—' ? 'No data yet' : capitalizeWords(common);
+
+        // 5) Ratings table
+        const tbody = document.getElementById('ratingsTbody');
+        if (tbody) {
+            tbody.innerHTML = '';
+            const rows = Object.entries(byRecipe)
+                .map(([id, v]) => ({ id, avg: v.sum / v.n, n: v.n }))
+                .sort((a, b) => b.avg - a.avg);
+            rows.forEach(rw => {
+                const tr = document.createElement('tr');
+                const tdName = document.createElement('td');
+                tdName.textContent = titleMap[rw.id] || rw.id;
+                const tdAvg = document.createElement('td');
+                tdAvg.textContent = rw.avg.toFixed(2);
+                const tdN = document.createElement('td');
+                tdN.textContent = String(rw.n);
+                tr.appendChild(tdName);
+                tr.appendChild(tdAvg);
+                tr.appendChild(tdN);
+                tbody.appendChild(tr);
+            });
+        }
+    } catch (err) {
+        console.warn('Stats initialization failed:', err);
+    }
+}
+
+function capitalizeWords(s) {
+    return String(s || '').replace(/\b\w/g, m => m.toUpperCase());
 }

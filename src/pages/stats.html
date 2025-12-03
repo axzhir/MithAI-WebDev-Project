@@ -25,21 +25,57 @@
         </div>
     </nav>
 
-    <div class="container py-5">
+    <div class="container py-5" id="stats-root">
         <h1 class="font-serif fw-bold mb-4">Culinary Analytics</h1>
+
+        <div class="row g-4 mb-4">
+            <div class="col-md-6">
+                <div class="card border-0 shadow-sm p-4 h-100">
+                    <h5 class="fw-bold mb-4">Cuisine Distribution</h5>
+                    <canvas id="cuisineChart" aria-label="Cuisine distribution chart" role="img"></canvas>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card border-0 shadow-sm p-4 h-100">
+                    <h5 class="fw-bold mb-4">Remix Insights</h5>
+                    <ul class="list-unstyled m-0">
+                        <li class="mb-2"><span class="text-muted">Most Used Ingredient:</span> <strong
+                                id="stat-most-ingredient">—</strong></li>
+                        <li class="mb-2"><span class="text-muted">Top Rated Recipe:</span> <strong
+                                id="stat-top-recipe">—</strong></li>
+                        <li class="mb-2"><span class="text-muted">Most Common Change:</span> <strong
+                                id="stat-common-change">—</strong></li>
+                        <li class="mb-2"><span class="text-muted">Average Remix Rating:</span> <strong
+                                id="stat-avg-rating">—</strong></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
 
         <div class="row g-4">
             <div class="col-md-6">
                 <div class="card border-0 shadow-sm p-4 h-100">
-                    <h5 class="fw-bold mb-4">Cuisine Distribution</h5>
-                    <canvas id="cuisineChart"></canvas>
+                    <h5 class="fw-bold mb-3">Recipe Ratings</h5>
+                    <div class="table-responsive">
+                        <table class="table table-sm align-middle mb-0">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Recipe</th>
+                                    <th scope="col">Avg Rating</th>
+                                    <th scope="col">Remixes</th>
+                                </tr>
+                            </thead>
+                            <tbody id="ratingsTbody"></tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
 
             <div class="col-md-6">
                 <div class="card border-0 shadow-sm p-4 h-100">
                     <h5 class="fw-bold mb-4">Data Management</h5>
-                    <p>Persist your data or start fresh.</p>
+                    <p class="mb-3">Persist your data or start fresh.</p>
                     <button type="button" onclick="exportData()" class="btn btn-dark w-100 mb-2">
                         <i class="fas fa-download"></i> Export Data (JSON)
                     </button>
@@ -50,7 +86,8 @@
             </div>
         </div>
     </div>
-    <script src="../scripts/script.js"></script>
+    <!-- Load app to compute stats and render charts -->
+    <script src="../scripts/app.js"></script>
 </body>
 
 </html>
