@@ -16,7 +16,8 @@ const DEFAULT_DATA = [
         cuisine: "General",
         mealType: "Staple",
         desc: "A simple, classic loaf of homemade bread.",
-        image: "https://www.themealdb.com/images/media/meals/wprvrw1511641295.jpg",
+        // Use TheMealDB ingredient image for a clear bread visual
+        image: "https://www.themealdb.com/images/ingredients/Bread.png",
         ingredients: ["500g Strong White Flour", "7g Dried Yeast", "1 tsp Salt", "300ml Warm Water"],
         instructions: ["Mix flour, yeast, and salt in a large bowl.", "Make a well in the center and pour in the warm water.", "Mix until you have a soft, sticky dough.", "Knead for 10 minutes on a floured surface until smooth.", "Place in a lightly oiled bowl, cover, and let rise for 1 hour.", "Bake at 220C (425F) for 25-30 minutes."],
         type: 'static'

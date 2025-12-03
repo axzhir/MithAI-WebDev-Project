@@ -119,3 +119,24 @@ body {
     position: relative;
     z-index: 10;
 }
+
+/* Prevent stretched-link from extending beyond card boundaries */
+.recipe-card {
+    position: relative;
+}
+
+.recipe-card .stretched-link::after {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 1;
+    content: "";
+}
+
+/* Ensure clickable elements on recipe detail page work properly */
+.recipe-header, .tab-content, .container {
+    position: relative;
+    z-index: auto;
+}
