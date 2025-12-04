@@ -46,7 +46,8 @@
                 return;
             }
 
-            const recipes = JSON.parse(localStorage.getItem('mithai-recipes')) || [];
+            // Read from canonical key with legacy fallback
+            const recipes = JSON.parse(localStorage.getItem('mithai_recipes')) || JSON.parse(localStorage.getItem('mithai-recipes')) || [];
             const recipe = recipes.find(r => r.id === recipeId);
 
             if (!recipe) {
@@ -56,7 +57,24 @@
 
             document.title = `${recipe.title} - MiTHAI`;
 
-            recipeContent.innerHTML = `
+            // Resolve an image: prefer stored image, else TheMealDB by title, else local fallback
+            const API_KEY = '65232507';
+            const API_BASE = 'https://www.themealdb.com/api/json/v2';
+            const API_SEARCH = `${API_BASE}/${API_KEY}/search.php?s=`;
+
+            async function resolveImage() {
+                if (recipe.image) return recipe.image;
+                try {
+                    const resp = await fetch(API_SEARCH + encodeURIComponent(recipe.title));
+                    const data = await resp.json();
+                    const url = data?.meals?.[0]?.strMealThumb;
+                    if (url) return url;
+                } catch (e) { }
+                return '../images/butterchicken.png';
+            }
+
+            resolveImage().then(imgUrl => {
+                recipeContent.innerHTML = `
                 <div class="d-flex justify-content-between align-items-center mb-2">
                     <h1 class="font-serif fw-bold">${recipe.title}</h1>
                     <div>
@@ -65,6 +83,9 @@
                     </div>
                 </div>
                 <p class="lead mb-4">${recipe.description}</p>
+                <div class="text-center mb-4">
+                    <img src="${imgUrl}" alt="${recipe.title}" class="img-fluid rounded-3 shadow-sm" style="max-height: 320px; object-fit: cover;">
+                </div>
                 
                 <h3 class="fw-bold mt-5">Ingredients</h3>
                 <ul class="list-group list-group-flush mb-4">
@@ -76,6 +97,7 @@
                     ${recipe.instructions.map(step => `<li class="list-group-item">${step}</li>`).join('')}
                 </ol>
             `;
+            });
         });
     </script>
 </body>

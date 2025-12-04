@@ -40,47 +40,38 @@
             <div class="col-lg-3 mb-4">
                 <div class="card border-0 shadow-sm p-3">
                     <h5 class="font-serif fw-bold mb-3">Organize By</h5>
-
                     <div class="mb-4">
                         <input type="text" id="searchInput" class="form-control bg-light border-0"
                             placeholder="Search...">
                     </div>
-
-                    <h6 class="fw-bold text-orange text-uppercase small mb-2">Culture / Cuisine</h6>
-                    <div class="list-group list-group-flush mb-4" id="cuisineFilters">
-                        <button type="button" class="list-group-item list-group-item-action all-filter active"
-                            onclick="filterRecipes('all', 'cuisine')">All Cuisines</button>
-                        <button type="button" class="list-group-item list-group-item-action"
-                            onclick="filterRecipes('General', 'cuisine')">General</button>
-                        <button type="button" class="list-group-item list-group-item-action"
-                            onclick="filterRecipes('East Asian', 'cuisine')">East Asian</button>
-                        <button type="button" class="list-group-item list-group-item-action"
-                            onclick="filterRecipes('South Asian', 'cuisine')">South Asian</button>
-                        <button type="button" class="list-group-item list-group-item-action"
-                            onclick="filterRecipes('Western', 'cuisine')">Western</button>
-                        <button type="button" class="list-group-item list-group-item-action"
-                            onclick="filterRecipes('European', 'cuisine')">European</button>
-                        <button type="button" class="list-group-item list-group-item-action"
-                            onclick="filterRecipes('African', 'cuisine')">African</button>
-                        <button type="button" class="list-group-item list-group-item-action"
-                            onclick="filterRecipes('Middle Eastern', 'cuisine')">Middle Eastern</button>
+                    <div class="mb-3">
+                        <label for="cuisineDropdown" class="fw-bold text-orange text-uppercase small mb-2">Culture /
+                            Cuisine</label>
+                        <select id="cuisineDropdown" class="form-select mb-2">
+                            <option value="all">All Cuisines</option>
+                            <option value="General">General</option>
+                            <option value="East Asian">East Asian</option>
+                            <option value="South Asian">South Asian</option>
+                            <option value="Western">Western</option>
+                            <option value="European">European</option>
+                            <option value="African">African</option>
+                            <option value="Middle Eastern">Middle Eastern</option>
+                        </select>
                     </div>
-
-                    <h6 class="fw-bold text-orange text-uppercase small mb-2">Meal Type</h6>
-                    <div class="list-group list-group-flush" id="typeFilters">
-                        <button type="button" class="list-group-item list-group-item-action all-filter active"
-                            onclick="filterRecipes('all', 'type', this, 'typeFilters')">All Types</button>
-                        <button type="button" class="list-group-item list-group-item-action"
-                            onclick="filterRecipes('Breakfast', 'type', this, 'typeFilters')">Breakfast</button>
-                        <button type="button" class="list-group-item list-group-item-action"
-                            onclick="filterRecipes('Lunch', 'type', this, 'typeFilters')">Lunch</button>
-                        <button type="button" class="list-group-item list-group-item-action"
-                            onclick="filterRecipes('Dinner', 'type', this, 'typeFilters')">Dinner</button>
-                        <button type="button" class="list-group-item list-group-item-action"
-                            onclick="filterRecipes('Snack', 'type', this, 'typeFilters')">Snacks</button>
-                        <button type="button" class="list-group-item list-group-item-action"
-                            onclick="filterRecipes('Dessert', 'type', this, 'typeFilters')">Desserts</button>
+                    <div class="mb-3">
+                        <label for="typeDropdown" class="fw-bold text-orange text-uppercase small mb-2">Meal
+                            Type</label>
+                        <select id="typeDropdown" class="form-select mb-2">
+                            <option value="all">All Types</option>
+                            <option value="Breakfast">Breakfast</option>
+                            <option value="Lunch">Lunch</option>
+                            <option value="Dinner">Dinner</option>
+                            <option value="Snack">Snacks</option>
+                            <option value="Dessert">Desserts</option>
+                        </select>
                     </div>
+                    <button id="clearFiltersBtn" type="button" class="btn btn-outline-dark w-100 mt-2">Clear
+                        Filters</button>
                 </div>
             </div>
 
@@ -99,22 +90,64 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Note: The main script.js is not needed here as it's for the create-recipe page -->
     <script>
-        let allRecipes = []; // To store all recipes for filtering
+        let allRecipes = [];
+        let filteredRecipes = [];
+        let selectedCuisine = 'all';
+        let selectedType = 'all';
+        let searchQuery = '';
 
         document.addEventListener('DOMContentLoaded', () => {
-            const recipeGrid = document.getElementById('recipe-grid');
-            const resultCount = document.getElementById('resultCount');
+            allRecipes = JSON.parse(localStorage.getItem('mithai_recipes')) || [];
+            filteredRecipes = [...allRecipes];
+            renderRecipes(filteredRecipes);
 
-            allRecipes = JSON.parse(localStorage.getItem('mithai-recipes')) || [];
+            // Dropdown filter listeners
+            document.getElementById('cuisineDropdown').addEventListener('change', (e) => {
+                selectedCuisine = e.target.value;
+                applyFilters();
+                highlightSelected('cuisineDropdown', selectedCuisine);
+            });
+            document.getElementById('typeDropdown').addEventListener('change', (e) => {
+                selectedType = e.target.value;
+                applyFilters();
+                highlightSelected('typeDropdown', selectedType);
+            });
+            document.getElementById('searchInput').addEventListener('input', (e) => {
+                searchQuery = e.target.value.trim().toLowerCase();
+                applyFilters();
+            });
+            document.getElementById('clearFiltersBtn').addEventListener('click', () => {
+                selectedCuisine = 'all';
+                selectedType = 'all';
+                searchQuery = '';
+                document.getElementById('cuisineDropdown').value = 'all';
+                document.getElementById('typeDropdown').value = 'all';
+                document.getElementById('searchInput').value = '';
+                applyFilters();
+                highlightSelected('cuisineDropdown', 'all');
+                highlightSelected('typeDropdown', 'all');
+            });
 
-            renderRecipes(allRecipes);
+
+            // Initial highlight
+            highlightSelected('cuisineDropdown', 'all');
+            highlightSelected('typeDropdown', 'all');
         });
+
+        function applyFilters() {
+            filteredRecipes = allRecipes.filter(recipe => {
+                let cuisineMatch = selectedCuisine === 'all' || recipe.cuisine === selectedCuisine;
+                let typeMatch = selectedType === 'all' || recipe.mealType === selectedType;
+                let searchMatch = !searchQuery || recipe.title.toLowerCase().includes(searchQuery) || recipe.description.toLowerCase().includes(searchQuery);
+                return cuisineMatch && typeMatch && searchMatch;
+            });
+            renderRecipes(filteredRecipes);
+        }
 
         function renderRecipes(recipes) {
             const recipeGrid = document.getElementById('recipe-grid');
             const resultCount = document.getElementById('resultCount');
-            recipeGrid.innerHTML = ''; // Clear existing recipes
-
+            recipeGrid.innerHTML = '';
             if (recipes.length === 0) {
                 recipeGrid.innerHTML = `
                     <div class="col-12 text-center py-5 text-muted">
@@ -125,7 +158,6 @@
                 resultCount.textContent = 'Showing 0 recipes';
                 return;
             }
-
             recipes.forEach(recipe => {
                 const cardHtml = `
                     <div class="col-lg-4 col-md-6 mb-4">
@@ -144,16 +176,21 @@
                 `;
                 recipeGrid.insertAdjacentHTML('beforeend', cardHtml);
             });
-
             resultCount.textContent = `Showing ${recipes.length} recipes`;
         }
 
-        // This is a placeholder for your filter logic. The inline `onclick` attributes
-        // in your HTML are complex and a more modern approach would be to handle this
-        // with event listeners here. For now, this will get your recipes showing.
-        function filterRecipes(filterValue, filterType, element, containerId) {
-            // This function is intentionally left simple for now.
-            alert(`Filtering by ${filterType}: ${filterValue}. \n(Full filter logic needs to be implemented)`);
+        // Highlight selected filter in orange (for dropdowns, change background and text color)
+        function highlightSelected(dropdownId, value) {
+            const dropdown = document.getElementById(dropdownId);
+            for (let i = 0; i < dropdown.options.length; i++) {
+                if (dropdown.options[i].value === value) {
+                    dropdown.options[i].style.backgroundColor = '#ea580c';
+                    dropdown.options[i].style.color = '#fff';
+                } else {
+                    dropdown.options[i].style.backgroundColor = '';
+                    dropdown.options[i].style.color = '';
+                }
+            }
         }
     </script>
 </body>

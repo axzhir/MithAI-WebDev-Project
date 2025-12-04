@@ -18,9 +18,14 @@ async function generateAIRecipe() {
         const searchTerm = titleInput.value.trim();
         let meal;
 
+        const API_KEY = '65232507';
+        const API_BASE = 'https://www.themealdb.com/api/json/v2';
+        const API_SEARCH = `${API_BASE}/${API_KEY}/search.php?s=`;
+        const API_RANDOM = `${API_BASE}/${API_KEY}/random.php`;
+
         if (searchTerm) {
             // If there's a search term, use the search API (cache-busted)
-            const response = await fetch(`https://www.themealdb.com/api/json/v1/1/search.php?s=${encodeURIComponent(searchTerm)}&t=${Date.now()}`);
+            const response = await fetch(`${API_SEARCH}${encodeURIComponent(searchTerm)}&t=${Date.now()}`);
             if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
             const data = await response.json();
             if (data.meals && data.meals.length) {
@@ -35,7 +40,7 @@ async function generateAIRecipe() {
         // If no meal was found by search or if there was no search term, get a random one
         if (!meal) {
             // Cache-bust the random endpoint so each click returns a fresh result
-            const response = await fetch(`https://www.themealdb.com/api/json/v1/1/random.php?t=${Date.now()}`);
+            const response = await fetch(`${API_RANDOM}?t=${Date.now()}`);
             if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
             const data = await response.json();
             meal = data.meals[0];
@@ -170,13 +175,16 @@ function handleRecipeSubmit(event) {
         // image: 'path/to/image.jpg' 
     };
 
-    // 2. Get existing recipes from local storage, or initialize an empty array
-    const recipes = JSON.parse(localStorage.getItem('mithai-recipes')) || [];
+    // 2. Get existing recipes from local storage (canonical key), or initialize an empty array
+    const RECIPES_KEY = 'mithai_recipes';
+    const recipes = JSON.parse(localStorage.getItem(RECIPES_KEY)) || [];
 
     // 3. Add the new recipe to the beginning of the array
     recipes.unshift(recipe);
 
-    // 4. Save the updated array back to local storage
+    // 4. Save the updated array back to local storage (canonical key)
+    localStorage.setItem(RECIPES_KEY, JSON.stringify(recipes));
+    // Write to legacy key for backward compatibility (optional)
     localStorage.setItem('mithai-recipes', JSON.stringify(recipes));
 
     // 5. Redirect to the home page to see the new recipe

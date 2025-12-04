@@ -49,6 +49,11 @@
             <div class="d-flex justify-content-center gap-3">
                 <a id="start-cooking" href="create-recipe.html" class="btn btn-dark btn-lg rounded-pill px-5">Start
                     Cooking</a>
+                <!-- Mobile/Tablet-only button -->
+                <a href="recipes.html" class="btn btn-outline-dark btn-lg rounded-pill px-4 d-lg-none"
+                    aria-label="Open Recipes">
+                    Open Recipes
+                </a>
             </div>
         </div>
     </header>
@@ -56,10 +61,16 @@
     <section class="container mb-5">
         <div class="d-flex justify-content-between align-items-end mb-4">
             <h2 class="h3 font-serif fw-bold m-0">Recent Experiments</h2>
-            <a href="recipes.html" class="text-orange text-decoration-none fw-bold">View all <i
+            <a href="#" id="view-all-btn" class="text-orange text-decoration-none fw-bold">View all <i
                     class="fas fa-arrow-right"></i></a>
         </div>
         <div id="recent-recipes-container" class="row g-4">
+        </div>
+        <!-- Small Open Recipes button (hidden by default, shown after View all) -->
+        <div id="open-recipes-btn-container" class="text-center mt-4" style="display: none;">
+            <a href="recipes.html" class="btn btn-sm btn-outline-dark rounded-pill px-3">
+                Open Recipes
+            </a>
         </div>
     </section>
 
@@ -89,6 +100,59 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../scripts/app.js"></script>
+    <script>
+        // Handle "View all" click to expand recent experiments
+        document.addEventListener('DOMContentLoaded', () => {
+            const viewAllBtn = document.getElementById('view-all-btn');
+            const openRecipesContainer = document.getElementById('open-recipes-btn-container');
+            let showingAll = false;
+
+            if (viewAllBtn) {
+                viewAllBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    showingAll = !showingAll;
+
+                    if (showingAll) {
+                        // Determine how many to show based on screen size
+                        let limit = 6; // Desktop default
+                        if (window.innerWidth < 768) {
+                            limit = 4; // Mobile
+                        } else if (window.innerWidth < 992) {
+                            limit = 6; // Tablet
+                        }
+
+                        // Re-render with more recipes
+                        const container = document.getElementById('recent-recipes-container');
+                        if (container && typeof GLOBAL_RECIPES !== 'undefined') {
+                            renderGrid(GLOBAL_RECIPES.slice(0, limit), 'recent-recipes-container');
+                        }
+
+                        // Show the small "Open Recipes" button
+                        if (openRecipesContainer) {
+                            openRecipesContainer.style.display = 'block';
+                        }
+
+                        // Update button text
+                        viewAllBtn.innerHTML = 'Show less <i class="fas fa-arrow-up"></i>';
+                    } else {
+                        // Back to showing 3
+                        const container = document.getElementById('recent-recipes-container');
+                        if (container && typeof GLOBAL_RECIPES !== 'undefined') {
+                            renderGrid(GLOBAL_RECIPES.slice(0, 3), 'recent-recipes-container');
+                        }
+
+                        // Hide the "Open Recipes" button
+                        if (openRecipesContainer) {
+                            openRecipesContainer.style.display = 'none';
+                        }
+
+                        // Update button text
+                        viewAllBtn.innerHTML = 'View all <i class="fas fa-arrow-right"></i>';
+                    }
+                });
+            }
+        });
+    </script>
 </body>
 
 </html>
