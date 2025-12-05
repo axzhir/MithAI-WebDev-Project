@@ -193,32 +193,44 @@ function renderGrid(recipes, containerId) {
         const col = document.createElement('div');
         col.className = 'col-md-4 col-sm-6';
 
+        // Card container (position: relative for stretched-link)
         const card = document.createElement('div');
-        card.className = 'recipe-card h-100 shadow-sm hover-shadow'; // <-- The hover class is here!
+        card.className = 'recipe-card h-100 shadow-sm hover-shadow';
 
+        // Card image (not wrapped in a link)
         const img = document.createElement('img');
         img.className = 'card-img-top';
-        img.alt = r.title;
+        img.alt = "";
         img.style.height = '200px';
         img.style.objectFit = 'cover';
-        img.src = PLACEHOLDER_IMAGE; // Start with a placeholder
+        img.src = PLACEHOLDER_IMAGE;
 
+        // Card body
         const body = document.createElement('div');
         body.className = 'card-body p-4';
 
+        // Card header
         const head = document.createElement('div');
         head.className = 'd-flex justify-content-between align-items-start mb-2';
 
-        const h5 = document.createElement('h5');
-        h5.className = 'fw-bold font-serif mb-0 text-truncate';
-        h5.style.maxWidth = '70%';
-        h5.innerText = r.title;
+        // Card title (h3 for correct heading order)
+        const h3 = document.createElement('h3');
+        h3.className = 'fw-bold font-serif mb-0 text-truncate';
+        h3.style.maxWidth = '70%';
+
+        // Title anchor with stretched-link
+        const titleLink = document.createElement('a');
+        titleLink.className = 'stretched-link text-decoration-none';
+        titleLink.href = `recipe-detail.html?id=${r.id}`;
+        titleLink.setAttribute('aria-label', `View details for ${r.title}`);
+        titleLink.innerText = r.title;
+        h3.appendChild(titleLink);
 
         const small = document.createElement('small');
         small.className = 'badge bg-light text-dark border';
         small.innerText = r.mealType || 'General';
 
-        head.appendChild(h5);
+        head.appendChild(h3);
         head.appendChild(small);
 
         const p = document.createElement('p');
@@ -229,14 +241,16 @@ function renderGrid(recipes, containerId) {
         badge.className = 'badge bg-secondary';
         badge.innerText = r.cuisine || '';
 
-        const link = document.createElement('a');
-        link.className = 'stretched-link';
-        link.href = `recipe-detail.html?id=${r.id}`;
+        // Example icon-only button (add aria-label if present)
+        // const iconBtn = document.createElement('button');
+        // iconBtn.className = 'btn btn-link p-0';
+        // iconBtn.innerHTML = '<i class="fas fa-heart"></i>';
+        // iconBtn.setAttribute('aria-label', 'Save Recipe');
+        // body.appendChild(iconBtn);
 
         body.appendChild(head);
         body.appendChild(p);
         body.appendChild(badge);
-        body.appendChild(link);
 
         card.appendChild(img);
         card.appendChild(body);
@@ -426,7 +440,7 @@ function initChart() {
     const hasData = Object.keys(counts).length > 0;
     const labels = hasData ? Object.keys(counts) : ['No Data'];
     const data = hasData ? Object.values(counts) : [1];
-    const palette = ['#ea580c', '#fdba74', '#fb923c', '#fed7aa', '#1c1917', '#20c997', '#0dcaf0', '#ffc107', '#dc3545', '#6f42c1', '#198754', '#6610f2'];
+    const palette = ['#b34700', '#fdba74', '#fb923c', '#fed7aa', '#1c1917', '#20c997', '#0dcaf0', '#ffc107', '#dc3545', '#6f42c1', '#198754', '#6610f2'];
     const colors = hasData ? labels.map((_, i) => palette[i % palette.length]) : ['#e9ecef'];
 
     const chart = new Chart(ctx, {

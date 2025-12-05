@@ -1,8 +1,8 @@
 /* Color Variables */
 :root {
-    --primary-orange: #ea580c;
-    --primary-orange-rgb: 234,88,12;
-    --hover-orange: #c2410c;
+    --primary-orange: #b34700;
+    --primary-orange-rgb: 179,71,0;
+    --hover-orange: #8c3900;
     --stone-dark: #1c1917;
     --stone-light: #f5f5f4;
     --pak-green: #01411c; /* Custom theme color */
@@ -50,11 +50,52 @@ body {
     border-radius: 1rem;
     overflow: hidden;
     background: white;
+    position: relative;
 }
 
 .recipe-card:hover {
     transform: translateY(-5px);
     box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+
+/* Small heading for sidebar sections */
+.sidebar-heading {
+    font-size: 1.25rem;
+}
+
+/* Improve contrast for helper text in filters */
+.form-text {
+    color: #6c757d !important;
+}
+
+/* Improve contrast for links in light backgrounds (but not buttons) */
+a:not(.btn) {
+    color: #0a3e8c !important;
+}
+
+a:not(.btn):hover {
+    color: #052c65 !important;
+}
+
+/* Ensure button text has proper contrast - only for dark/filled buttons */
+.btn-dark,
+.btn-orange,
+.btn-primary,
+.btn-secondary,
+.btn-success,
+.btn-danger,
+.btn-warning,
+.btn-info {
+    color: white !important;
+}
+
+/* Outline buttons should have dark text, not white */
+.btn-outline-dark {
+    color: #212529 !important;
+}
+
+.btn-outline-dark:hover {
+    color: white !important;
 }
 
 .recipe-intro {

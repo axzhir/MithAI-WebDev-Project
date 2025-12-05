@@ -15,7 +15,9 @@ async function generateAIRecipe() {
 
     try {
         const titleInput = document.getElementById('title');
-        const searchTerm = titleInput.value.trim();
+        // Use stored search term if available, otherwise use current value
+        const storedSearchTerm = titleInput.getAttribute('data-search-term');
+        const searchTerm = storedSearchTerm || titleInput.value.trim();
         let meal;
 
         const API_KEY = '65232507';
@@ -24,35 +26,21 @@ async function generateAIRecipe() {
         const API_RANDOM = `${API_BASE}/${API_KEY}/random.php`;
 
         if (searchTerm) {
-            // If there's a search term, use the search API (cache-busted)
-            const response = await fetch(`${API_SEARCH}${encodeURIComponent(searchTerm)}&t=${Date.now()}`);
+            // Store the original search term so subsequent clicks use the same search
+            titleInput.setAttribute('data-search-term', searchTerm);
+
+            // If there's a search term, use the search API (cache-busted with random param)
+            const response = await fetch(`${API_SEARCH}${encodeURIComponent(searchTerm)}&t=${Date.now()}&r=${Math.random()}`);
             if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
             const data = await response.json();
-            if (data.meals && data.meals.length > 1) {
+            if (data.meals && data.meals.length > 0) {
                 // Pick a random match so repeated clicks vary even with same search term
                 const idx = Math.floor(Math.random() * data.meals.length);
                 meal = data.meals[idx];
-            } else if (data.meals && data.meals.length === 1) {
-                // If only one meal, fallback to random endpoint and filter for turkey
-                let found = false;
-                for (let attempt = 0; attempt < 5 && !found; attempt++) {
-                    const randResponse = await fetch(`${API_RANDOM}?t=${Date.now()}`);
-                    if (!randResponse.ok) throw new Error(`HTTP error! status: ${randResponse.status}`);
-                    const randData = await randResponse.json();
-                    const randMeal = randData.meals[0];
-                    if (randMeal.strMeal && randMeal.strMeal.toLowerCase().includes(searchTerm.toLowerCase())) {
-                        meal = randMeal;
-                        found = true;
-                    }
-                }
-                // If not found after attempts, use the single search result
-                if (!found) meal = data.meals[0];
             } else {
                 alert(`No recipes found for "${searchTerm}". We'll generate a random one for you!`);
             }
-        }
-
-        // If no meal was found by search or if there was no search term, get a random one
+        }        // If no meal was found by search or if there was no search term, get a random one
         if (!meal) {
             // Cache-bust the random endpoint so each click returns a fresh result
             const response = await fetch(`${API_RANDOM}?t=${Date.now()}`);
@@ -211,3 +199,19 @@ function handleRecipeSubmit(event) {
         saveAndRedirect('');
     }
 }
+
+// AI Recipe Generator - generates recipes from TheMealDB based on title input
+window.demoAIFill = function () {
+    generateAIRecipe();
+};
+
+// Clear stored search term when user manually types in the title field
+document.addEventListener('DOMContentLoaded', function () {
+    const titleInput = document.getElementById('title');
+    if (titleInput) {
+        titleInput.addEventListener('input', function () {
+            // Clear the stored search term when user manually changes the title
+            this.removeAttribute('data-search-term');
+        });
+    }
+});

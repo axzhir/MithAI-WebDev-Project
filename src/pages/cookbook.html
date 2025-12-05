@@ -39,7 +39,7 @@
         <div class="row">
             <div class="col-lg-3 mb-4">
                 <div class="card border-0 shadow-sm p-3">
-                    <h5 class="font-serif fw-bold mb-3">Organize By</h5>
+                    <h2 class="font-serif fw-bold mb-3 sidebar-heading">Organize By</h2>
                     <div class="mb-4">
                         <label for="searchInput" class="fw-bold text-orange text-uppercase small mb-2">Recipe
                             Name</label>
@@ -76,7 +76,7 @@
                             Ingredient</label>
                         <input type="text" id="ingredientSearch" class="form-control"
                             placeholder="e.g., chicken, tomato...">
-                        <small class="text-muted">Search for recipes containing this ingredient</small>
+                        <small class="form-text">Search for recipes containing this ingredient</small>
                     </div>
                     <button id="clearFiltersBtn" type="button" class="btn btn-outline-dark w-100 mt-2">Clear
                         Filters</button>
@@ -170,7 +170,7 @@
                 recipeGrid.innerHTML = `
                     <div class="col-12 text-center py-5 text-muted">
                         <p class="lead">No recipes found.</p>
-                        <p>Try adjusting your filters or <a href="create-recipe.html">create a new recipe</a>.</p>
+                        <p>Try adjusting your filters or use the "New Recipe" button in the navigation.</p>
                     </div>
                 `;
                 resultCount.textContent = 'Showing 0 recipes';
@@ -179,15 +179,15 @@
             recipes.forEach(recipe => {
                 const cardHtml = `
                     <div class="col-lg-4 col-md-6 mb-4">
-                        <div class="card h-100 shadow-sm">
+                        <div class="card h-100 shadow-sm recipe-card">
+                            <img src="" alt="" class="card-img-top" style="height: 200px; object-fit: cover;">
                             <div class="card-body d-flex flex-column">
-                                <h5 class="card-title font-serif fw-bold">${recipe.title}</h5>
+                                <h3 class="card-title font-serif fw-bold mb-0"><a href="recipe.html?id=${recipe.id}" class="stretched-link text-decoration-none" aria-label="View details for ${recipe.title}">${recipe.title}</a></h3>
                                 <p class="card-text text-muted small flex-grow-1">${recipe.description.substring(0, 100)}...</p>
                                 <div>
                                     <span class="badge bg-secondary me-1">${recipe.cuisine}</span>
                                     <span class="badge bg-info text-dark">${recipe.mealType}</span>
                                 </div>
-                                <a href="recipe.html?id=${recipe.id}" class="btn btn-sm btn-outline-dark mt-3 stretched-link">View Recipe</a>
                             </div>
                         </div>
                     </div>
@@ -202,7 +202,7 @@
             const dropdown = document.getElementById(dropdownId);
             for (let i = 0; i < dropdown.options.length; i++) {
                 if (dropdown.options[i].value === value) {
-                    dropdown.options[i].style.backgroundColor = '#ea580c';
+                    dropdown.options[i].style.backgroundColor = '#b34700';
                     dropdown.options[i].style.color = '#fff';
                 } else {
                     dropdown.options[i].style.backgroundColor = '';

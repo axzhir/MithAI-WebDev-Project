@@ -12,15 +12,15 @@
 </head>
 
 <body class="bg-light text-dark">
-    <nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top border-bottom">
+    <nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top border-bottom" aria-label="Main Navigation">
         <div class="container">
             <a class="navbar-brand d-flex align-items-center gap-2" href="index.html">
-                <img src="../images/logo.png" alt="MiTHAI Logo" height="40">
+                <img src="../images/logo.png" alt="MiTHAI logo, home page" height="40">
                 <span class="fw-bold font-serif">MiTH<span class="text-orange">AI</span></span>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon" aria-hidden="true"></span>
+                <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto align-items-center">
@@ -29,8 +29,10 @@
                     <li class="nav-item"><a class="nav-link" href="stats.html">Insights</a></li>
                     <li class="nav-item"><a class="nav-link" href="about.html">About</a></li>
                     <li class="nav-item ms-2">
-                        <a href="create-recipe.html" class="btn btn-dark rounded-pill px-4 hover-orange">
-                            <i class="fas fa-plus-circle me-1"></i> New Recipe
+                        <a href="create-recipe.html" class="btn btn-dark rounded-pill px-4 hover-orange"
+                            aria-label="Create a new recipe">
+                            <i class="fas fa-plus-circle me-1" aria-hidden="true"></i> <span
+                                class="visually-hidden">Create a new recipe</span> New Recipe
                         </a>
                     </li>
                 </ul>
@@ -47,48 +49,49 @@
                 Document your culinary experiments. Track what works, iterate on what doesn't, and master your recipes.
             </p>
             <div class="d-flex justify-content-center gap-3">
-                <a id="start-cooking" href="create-recipe.html" class="btn btn-dark btn-lg rounded-pill px-5">Start
-                    Cooking</a>
+                <a id="start-cooking" href="create-recipe.html" class="btn btn-dark btn-lg rounded-pill px-5"
+                    aria-label="Start Cooking">Start Cooking</a>
                 <!-- Mobile/Tablet-only button -->
                 <a href="cookbook.html" class="btn btn-outline-dark btn-lg rounded-pill px-4 d-lg-none"
-                    aria-label="Open Recipes">
-                    Open Recipes
-                </a>
+                    aria-label="View all recipes">Open Recipes</a>
             </div>
         </div>
     </header>
 
-    <section class="container mb-5">
-        <div class="d-flex justify-content-between align-items-end mb-4">
-            <h2 class="h3 font-serif fw-bold m-0">Recent Experiments</h2>
-            <a href="#" id="view-all-btn" class="text-orange text-decoration-none fw-bold">View all <i
-                    class="fas fa-arrow-right"></i></a>
-        </div>
-        <div id="recent-recipes-container" class="row g-4">
-        </div>
-        <!-- Small Open Recipes button (hidden by default, shown after View all) -->
-        <div id="open-recipes-btn-container" class="text-center mt-4" style="display: none;">
-            <a href="cookbook.html" class="btn btn-sm btn-outline-dark rounded-pill px-3">
-                Open Recipes
-            </a>
-        </div>
-    </section>
+    <main>
+        <section class="container mb-5">
+            <div class="d-flex justify-content-between align-items-end mb-4">
+                <h2 class="h3 font-serif fw-bold m-0">Recent Experiments</h2>
+                <a href="#" id="view-all-btn" class="text-orange text-decoration-none fw-bold"
+                    aria-label="View all recent experiments">View all <i class="fas fa-arrow-right"
+                        aria-hidden="true"></i></a>
+            </div>
+            <div id="recent-recipes-container" class="row g-4" aria-live="polite">
+            </div>
+            <!-- Small Open Recipes button (hidden by default, shown after View all) -->
+            <div id="open-recipes-btn-container" class="text-center mt-4" style="display: none;">
+                <a href="cookbook.html" class="btn btn-sm btn-outline-dark rounded-pill px-3" aria-label="Open Recipes">
+                    Open Recipes
+                </a>
+            </div>
+        </section>
+    </main>
 
     <footer class="bg-white border-top py-5 mt-5">
         <div class="container">
             <div class="row">
                 <div class="col-md-6 mb-4">
-                    <h5 class="fw-bold font-serif">MiTH<span class="text-orange">AI</span></h5>
+                    <h2 class="fw-bold font-serif">MiTH<span class="text-orange">AI</span></h2>
                     <p class="text-muted small">
                         "Mithai" means sweets in Urdu. A project for the Recipe Remix Organizer.
                     </p>
                 </div>
                 <div class="col-md-3 mb-4">
-                    <h6 class="fw-bold">Resources</h6>
+                    <h3 class="fw-bold">Resources</h3>
                     <ul class="list-unstyled small text-muted">
                         <!-- Report page removed from project -->
                         <li><a href="https://www.themealdb.com/api.php" target="_blank"
-                                class="text-decoration-none text-muted">TheMealDB API</a></li>
+                                class="text-decoration-none text-muted" rel="noopener">TheMealDB API</a></li>
                     </ul>
                 </div>
             </div>
@@ -106,12 +109,10 @@
             const viewAllBtn = document.getElementById('view-all-btn');
             const openRecipesContainer = document.getElementById('open-recipes-btn-container');
             let showingAll = false;
-
             if (viewAllBtn) {
                 viewAllBtn.addEventListener('click', (e) => {
                     e.preventDefault();
                     showingAll = !showingAll;
-
                     if (showingAll) {
                         // Determine how many to show based on screen size
                         let limit = 6; // Desktop default
@@ -120,39 +121,33 @@
                         } else if (window.innerWidth < 992) {
                             limit = 6; // Tablet
                         }
-
                         // Re-render with more recipes
                         const container = document.getElementById('recent-recipes-container');
                         if (container && typeof GLOBAL_RECIPES !== 'undefined') {
                             renderGrid(GLOBAL_RECIPES.slice(0, limit), 'recent-recipes-container');
                         }
-
                         // Show the small "Open Recipes" button
                         if (openRecipesContainer) {
                             openRecipesContainer.style.display = 'block';
                         }
-
                         // Update button text
-                        viewAllBtn.innerHTML = 'Show less <i class="fas fa-arrow-up"></i>';
+                        viewAllBtn.innerHTML = 'Show less <i class="fas fa-arrow-up" aria-hidden="true"></i>';
                     } else {
                         // Back to showing 3
                         const container = document.getElementById('recent-recipes-container');
                         if (container && typeof GLOBAL_RECIPES !== 'undefined') {
                             renderGrid(GLOBAL_RECIPES.slice(0, 3), 'recent-recipes-container');
                         }
-
                         // Hide the "Open Recipes" button
                         if (openRecipesContainer) {
                             openRecipesContainer.style.display = 'none';
                         }
-
                         // Update button text
-                        viewAllBtn.innerHTML = 'View all <i class="fas fa-arrow-right"></i>';
+                        viewAllBtn.innerHTML = 'View all <i class="fas fa-arrow-right" aria-hidden="true"></i>';
                     }
                 });
             }
         });
-
     </script>
 </body>
 
