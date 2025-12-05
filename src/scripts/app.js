@@ -323,6 +323,16 @@ window.clearData = function () {
     // Clear only user-made data keys and reload
     localStorage.removeItem('mithai_recipes');
     localStorage.removeItem('mithai-remixes');
+    localStorage.removeItem('mithai_ratings');
+
+    // Clear individual recipe ratings
+    const keys = Object.keys(localStorage);
+    keys.forEach(key => {
+        if (key.startsWith('mithai_rating_')) {
+            localStorage.removeItem(key);
+        }
+    });
+
     setTimeout(() => window.location.reload(), 300);
 };
 
