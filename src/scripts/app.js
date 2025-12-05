@@ -548,22 +548,50 @@ function initStats(recipes, remixes) {
         const elCommon = document.getElementById('stat-common-change');
         if (elCommon && !noRemixes) elCommon.textContent = common === '—' ? 'N/A' : capitalizeWords(common);
 
-        // 5) Ratings table
+        // 5) Ratings table - now includes recipe ratings from the new rating system
         const tbody = document.getElementById('ratingsTbody');
         if (tbody) {
             tbody.innerHTML = '';
-            const rows = Object.entries(byRecipe)
-                .map(([id, v]) => ({ id, avg: v.sum / v.n, n: v.n }))
+
+            // Get recipe ratings from the new rating system
+            const recipeRatings = JSON.parse(localStorage.getItem('mithai_ratings')) || {};
+            const recipeRatingRows = [];
+
+            // Process recipe ratings
+            Object.entries(recipeRatings).forEach(([recipeId, ratingsArray]) => {
+                if (ratingsArray && ratingsArray.length > 0) {
+                    const avg = ratingsArray.reduce((a, b) => a + b, 0) / ratingsArray.length;
+                    recipeRatingRows.push({
+                        id: recipeId,
+                        avg: avg,
+                        n: ratingsArray.length,
+                        source: 'rating'
+                    });
+                }
+            });
+
+            // Process remix ratings
+            const remixRatingRows = Object.entries(byRecipe)
+                .map(([id, v]) => ({
+                    id,
+                    avg: v.sum / v.n,
+                    n: v.n,
+                    source: 'remix'
+                }));
+
+            // Combine and sort by average rating
+            const allRows = [...recipeRatingRows, ...remixRatingRows]
                 .sort((a, b) => b.avg - a.avg);
-            if (!noRemixes) {
-                rows.forEach(rw => {
+
+            if (allRows.length > 0) {
+                allRows.forEach(rw => {
                     const tr = document.createElement('tr');
                     const tdName = document.createElement('td');
                     tdName.textContent = titleMap[rw.id] || rw.id;
                     const tdAvg = document.createElement('td');
-                    tdAvg.textContent = rw.avg.toFixed(2);
+                    tdAvg.textContent = rw.avg.toFixed(1) + '/5.0';
                     const tdN = document.createElement('td');
-                    tdN.textContent = String(rw.n);
+                    tdN.textContent = String(rw.n) + ' ' + (rw.source === 'rating' ? 'votes' : 'remixes');
                     tr.appendChild(tdName);
                     tr.appendChild(tdAvg);
                     tr.appendChild(tdN);

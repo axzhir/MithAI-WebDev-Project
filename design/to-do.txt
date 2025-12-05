@@ -13,9 +13,5 @@ See Awesome JavaScriptLinks to an external site. (anything from the "Files" sect
 You're looking for "browser-ready" libraries; avoid anything that uses "npm" or "node", etc.
 
 Bugs to Fix:
-
-make the recipes filter out based on tag
-fix the AI generation
-Fix the API code
 Check to see if it passes WAVE
 Push to generation

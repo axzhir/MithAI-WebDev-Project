@@ -28,10 +28,25 @@ async function generateAIRecipe() {
             const response = await fetch(`${API_SEARCH}${encodeURIComponent(searchTerm)}&t=${Date.now()}`);
             if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
             const data = await response.json();
-            if (data.meals && data.meals.length) {
+            if (data.meals && data.meals.length > 1) {
                 // Pick a random match so repeated clicks vary even with same search term
                 const idx = Math.floor(Math.random() * data.meals.length);
                 meal = data.meals[idx];
+            } else if (data.meals && data.meals.length === 1) {
+                // If only one meal, fallback to random endpoint and filter for turkey
+                let found = false;
+                for (let attempt = 0; attempt < 5 && !found; attempt++) {
+                    const randResponse = await fetch(`${API_RANDOM}?t=${Date.now()}`);
+                    if (!randResponse.ok) throw new Error(`HTTP error! status: ${randResponse.status}`);
+                    const randData = await randResponse.json();
+                    const randMeal = randData.meals[0];
+                    if (randMeal.strMeal && randMeal.strMeal.toLowerCase().includes(searchTerm.toLowerCase())) {
+                        meal = randMeal;
+                        found = true;
+                    }
+                }
+                // If not found after attempts, use the single search result
+                if (!found) meal = data.meals[0];
             } else {
                 alert(`No recipes found for "${searchTerm}". We'll generate a random one for you!`);
             }
@@ -163,6 +178,9 @@ function handleRecipeSubmit(event) {
     event.preventDefault();
 
     // 1. Get all values from the form
+    const imageInput = document.getElementById('image');
+    const file = imageInput && imageInput.files && imageInput.files[0];
+    const reader = file ? new FileReader() : null;
     const recipe = {
         id: Date.now(), // Unique ID for the recipe
         title: document.getElementById('title').value,
@@ -171,22 +189,25 @@ function handleRecipeSubmit(event) {
         mealType: document.getElementById('mealType').value,
         ingredients: document.getElementById('ingredients').value.split(',').map(item => item.trim()),
         instructions: document.getElementById('instructions').value.split('\n').map(item => item.trim()),
-        // You can add an image property here later
-        // image: 'path/to/image.jpg' 
+        image: ''
     };
 
-    // 2. Get existing recipes from local storage (canonical key), or initialize an empty array
-    const RECIPES_KEY = 'mithai_recipes';
-    const recipes = JSON.parse(localStorage.getItem(RECIPES_KEY)) || [];
+    function saveAndRedirect(imgData) {
+        if (imgData) recipe.image = imgData;
+        const RECIPES_KEY = 'mithai_recipes';
+        const recipes = JSON.parse(localStorage.getItem(RECIPES_KEY)) || [];
+        recipes.unshift(recipe);
+        localStorage.setItem(RECIPES_KEY, JSON.stringify(recipes));
+        localStorage.setItem('mithai-recipes', JSON.stringify(recipes));
+        window.location.href = 'index.html';
+    }
 
-    // 3. Add the new recipe to the beginning of the array
-    recipes.unshift(recipe);
-
-    // 4. Save the updated array back to local storage (canonical key)
-    localStorage.setItem(RECIPES_KEY, JSON.stringify(recipes));
-    // Write to legacy key for backward compatibility (optional)
-    localStorage.setItem('mithai-recipes', JSON.stringify(recipes));
-
-    // 5. Redirect to the home page to see the new recipe
-    window.location.href = 'index.html';
+    if (reader) {
+        reader.onload = function (e) {
+            saveAndRedirect(e.target.result);
+        };
+        reader.readAsDataURL(file);
+    } else {
+        saveAndRedirect('');
+    }
 }

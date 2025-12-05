@@ -41,8 +41,9 @@
                 <div class="card border-0 shadow-sm p-3">
                     <h5 class="font-serif fw-bold mb-3">Organize By</h5>
                     <div class="mb-4">
-                        <input type="text" id="searchInput" class="form-control bg-light border-0"
-                            placeholder="Search...">
+                        <label for="searchInput" class="fw-bold text-orange text-uppercase small mb-2">Recipe
+                            Name</label>
+                        <input type="text" id="searchInput" class="form-control" placeholder="e.g., Butter Chicken">
                     </div>
                     <div class="mb-3">
                         <label for="cuisineDropdown" class="fw-bold text-orange text-uppercase small mb-2">Culture /
@@ -70,6 +71,13 @@
                             <option value="Dessert">Desserts</option>
                         </select>
                     </div>
+                    <div class="mb-3">
+                        <label for="ingredientSearch" class="fw-bold text-orange text-uppercase small mb-2">By
+                            Ingredient</label>
+                        <input type="text" id="ingredientSearch" class="form-control"
+                            placeholder="e.g., chicken, tomato...">
+                        <small class="text-muted">Search for recipes containing this ingredient</small>
+                    </div>
                     <button id="clearFiltersBtn" type="button" class="btn btn-outline-dark w-100 mt-2">Clear
                         Filters</button>
                 </div>
@@ -95,6 +103,7 @@
         let selectedCuisine = 'all';
         let selectedType = 'all';
         let searchQuery = '';
+        let ingredientQuery = '';
 
         document.addEventListener('DOMContentLoaded', () => {
             allRecipes = JSON.parse(localStorage.getItem('mithai_recipes')) || [];
@@ -116,13 +125,19 @@
                 searchQuery = e.target.value.trim().toLowerCase();
                 applyFilters();
             });
+            document.getElementById('ingredientSearch').addEventListener('input', (e) => {
+                ingredientQuery = e.target.value.trim().toLowerCase();
+                applyFilters();
+            });
             document.getElementById('clearFiltersBtn').addEventListener('click', () => {
                 selectedCuisine = 'all';
                 selectedType = 'all';
                 searchQuery = '';
+                ingredientQuery = '';
                 document.getElementById('cuisineDropdown').value = 'all';
                 document.getElementById('typeDropdown').value = 'all';
                 document.getElementById('searchInput').value = '';
+                document.getElementById('ingredientSearch').value = '';
                 applyFilters();
                 highlightSelected('cuisineDropdown', 'all');
                 highlightSelected('typeDropdown', 'all');
@@ -139,7 +154,10 @@
                 let cuisineMatch = selectedCuisine === 'all' || recipe.cuisine === selectedCuisine;
                 let typeMatch = selectedType === 'all' || recipe.mealType === selectedType;
                 let searchMatch = !searchQuery || recipe.title.toLowerCase().includes(searchQuery) || recipe.description.toLowerCase().includes(searchQuery);
-                return cuisineMatch && typeMatch && searchMatch;
+                let ingredientMatch = !ingredientQuery || (recipe.ingredients && recipe.ingredients.some(ing =>
+                    String(ing).toLowerCase().includes(ingredientQuery)
+                ));
+                return cuisineMatch && typeMatch && searchMatch && ingredientMatch;
             });
             renderRecipes(filteredRecipes);
         }

@@ -25,6 +25,18 @@ body {
     background-color: var(--primary-orange) !important;
 }
 
+.btn-orange {
+    background-color: var(--primary-orange) !important;
+    border-color: var(--primary-orange) !important;
+    color: white !important;
+}
+
+.btn-orange:hover {
+    background-color: var(--hover-orange) !important;
+    border-color: var(--hover-orange) !important;
+    color: white !important;
+}
+
 /* Custom Button Hover Effects */
 .hover-orange:hover {
     background-color: var(--primary-orange) !important;
