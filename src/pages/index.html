@@ -28,6 +28,29 @@
                     <li class="nav-item"><a class="nav-link" href="recipes.html">Recipes</a></li>
                     <li class="nav-item"><a class="nav-link" href="stats.html">Insights</a></li>
                     <li class="nav-item"><a class="nav-link" href="about.html">About</a></li>
+                    <li class="nav-item dropdown ms-2">
+                        <a class="nav-link dropdown-toggle" href="#" id="settingsDropdown" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-cog"></i> Settings
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="settingsDropdown">
+                            <li>
+                                <h6 class="dropdown-header">Accessibility</h6>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="#" onclick="toggleDarkMode(); return false;">
+                                    <i class="fas fa-moon me-2"></i>
+                                    <span id="darkModeText">Dark Mode</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="#" onclick="toggleDyslexicFont(); return false;">
+                                    <i class="fas fa-font me-2"></i>
+                                    <span id="fontText">OpenDyslexic Font</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
                     <li class="nav-item ms-2">
                         <a href="create-recipe.html" class="btn btn-dark rounded-pill px-4 hover-orange">
                             <i class="fas fa-plus-circle me-1"></i> New Recipe
@@ -152,7 +175,40 @@
                 });
             }
         });
+
+        // Accessibility Settings Functions
+        function toggleDarkMode() {
+            const isDark = document.body.classList.toggle('dark-mode');
+            localStorage.setItem('darkMode', isDark ? 'enabled' : 'disabled');
+            document.getElementById('darkModeText').textContent = isDark ? 'Light Mode' : 'Dark Mode';
+        }
+
+        function toggleDyslexicFont() {
+            const isEnabled = document.body.classList.toggle('dyslexic-font');
+            localStorage.setItem('dyslexicFont', isEnabled ? 'enabled' : 'disabled');
+            document.getElementById('fontText').textContent = isEnabled ? 'Default Font' : 'OpenDyslexic Font';
+        }
+
+        // Load saved preferences on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            // Check dark mode preference
+            if (localStorage.getItem('darkMode') === 'enabled') {
+                document.body.classList.add('dark-mode');
+                const darkModeText = document.getElementById('darkModeText');
+                if (darkModeText) darkModeText.textContent = 'Light Mode';
+            }
+
+            // Check dyslexic font preference
+            if (localStorage.getItem('dyslexicFont') === 'enabled') {
+                document.body.classList.add('dyslexic-font');
+                const fontText = document.getElementById('fontText');
+                if (fontText) fontText.textContent = 'Default Font';
+            }
+        });
     </script>
+
+    <!-- OpenDyslexic Font -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/opendyslexic@1.0.0/opendyslexic-regular.min.css">
 </body>
 
 </html>

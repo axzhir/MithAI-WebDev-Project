@@ -19,8 +19,26 @@
                 <img src="../images/logo.png" alt="MiTHAI Logo" height="36">
                 <span class="fw-bold font-serif">MiTH<span class="text-orange">AI</span></span>
             </a>
-            <div class="navbar-nav ms-auto">
-                <a class="nav-link" href="index.html">Back to Home</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item"><a class="nav-link" href="index.html">Back to Home</a></li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="settingsDropdown" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-cog"></i> Settings
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="settingsDropdown">
+                            <li><a class="dropdown-item" href="#" onclick="toggleDarkMode()"><span
+                                        id="darkModeText">Dark Mode</span></a></li>
+                            <li><a class="dropdown-item" href="#" onclick="toggleDyslexicFont()"><span
+                                        id="fontText">OpenDyslexic Font</span></a></li>
+                        </ul>
+                    </li>
+                </ul>
             </div>
         </div>
     </nav>
@@ -110,6 +128,19 @@
     <!-- Load app to compute stats and render charts -->
     <script src="../scripts/app.js"></script>
     <script>
+        // Accessibility Settings Functions
+        function toggleDarkMode() {
+            const isDark = document.body.classList.toggle('dark-mode');
+            localStorage.setItem('darkMode', isDark ? 'enabled' : 'disabled');
+            document.getElementById('darkModeText').textContent = isDark ? 'Light Mode' : 'Dark Mode';
+        }
+
+        function toggleDyslexicFont() {
+            const isEnabled = document.body.classList.toggle('dyslexic-font');
+            localStorage.setItem('dyslexicFont', isEnabled ? 'enabled' : 'disabled');
+            document.getElementById('fontText').textContent = isEnabled ? 'Default Font' : 'OpenDyslexic Font';
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             const openBtn = document.getElementById('openClearDataModal');
             const modalEl = document.getElementById('clearDataModal');
@@ -122,8 +153,23 @@
                     clearData();
                 });
             }
+
+            // Load saved accessibility preferences
+            if (localStorage.getItem('darkMode') === 'enabled') {
+                document.body.classList.add('dark-mode');
+                const darkModeText = document.getElementById('darkModeText');
+                if (darkModeText) darkModeText.textContent = 'Light Mode';
+            }
+            if (localStorage.getItem('dyslexicFont') === 'enabled') {
+                document.body.classList.add('dyslexic-font');
+                const fontText = document.getElementById('fontText');
+                if (fontText) fontText.textContent = 'Default Font';
+            }
         });
     </script>
+
+    <!-- OpenDyslexic Font -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/opendyslexic@1.0.0/opendyslexic-regular.min.css">
 </body>
 
 </html>
