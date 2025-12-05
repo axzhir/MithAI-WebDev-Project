@@ -273,7 +273,7 @@ window.handleRecipeSubmit = function (e) {
 
         saveRecipeToLocal(newRecipe);
         alert("Recipe Saved!");
-        window.location.href = 'recipes.html';
+        window.location.href = 'cookbook.html';
 
     } catch (err) {
         alert("Error saving: " + err.message);
@@ -295,7 +295,7 @@ window.handleRemixSubmit = function (e) {
         };
         saveRemixToLocal(remix);
         alert("Remix Saved!");
-        window.location.href = 'recipes.html';
+        window.location.href = 'cookbook.html';
     } catch (err) {
         alert("Error saving remix: " + err.message);
     }

@@ -2,7 +2,7 @@
 
 // --- FORM SUBMISSION & BUTTON HANDLERS ---
 
-window.handleRecipeSubmit = function(e) {
+window.handleRecipeSubmit = function (e) {
     e.preventDefault();
     try {
         const newRecipe = {
@@ -18,27 +18,27 @@ window.handleRecipeSubmit = function(e) {
         };
         saveRecipeToLocal(newRecipe); // Uses function from data.js
         alert("Recipe Saved!");
-        window.location.href = 'recipes.html';
-    } catch(err) {
+        window.location.href = 'cookbook.html';
+    } catch (err) {
         alert("Error saving: " + err.message);
     }
 };
 
-window.handleRemixSubmit = function(e) {
+window.handleRemixSubmit = function (e) {
     e.preventDefault();
     alert("Remix Saved!");
-    window.location.href = 'recipes.html';
+    window.location.href = 'cookbook.html';
 };
 
-window.demoAIFill = function() {
+window.demoAIFill = function () {
     const titleInput = document.getElementById('title');
     if (!titleInput) {
         alert("Wait! The form is not fully loaded yet. Try again in a second.");
         return;
     }
 
-    alert("AI Generating Recipe... (Simulating 1-second response)"); 
-    
+    alert("AI Generating Recipe... (Simulating 1-second response)");
+
     // Simulate AI results populating the form fields
     setTimeout(() => {
         titleInput.value = "Spiced Blueberry Waffles (AI Remix)";
@@ -50,14 +50,14 @@ window.demoAIFill = function() {
     }, 1000);
 };
 
-window.clearData = function() {
+window.clearData = function () {
     if (confirm("Delete all local data?")) {
         localStorage.removeItem('mithai_recipes');
         window.location.reload();
     }
 };
 
-window.exportData = function() {
+window.exportData = function () {
     const data = getLocalRecipes();
     const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data));
     const anchor = document.createElement('a');
