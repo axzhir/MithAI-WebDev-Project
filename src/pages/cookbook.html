@@ -177,22 +177,65 @@
                 return;
             }
             recipes.forEach(recipe => {
-                const cardHtml = `
-                    <div class="col-lg-4 col-md-6 mb-4">
-                        <div class="card h-100 shadow-sm recipe-card">
-                            <img src="" alt="" class="card-img-top" style="height: 200px; object-fit: cover;">
-                            <div class="card-body d-flex flex-column">
-                                <h3 class="card-title font-serif fw-bold mb-0"><a href="recipe.html?id=${recipe.id}" class="stretched-link text-decoration-none" aria-label="View details for ${recipe.title}">${recipe.title}</a></h3>
-                                <p class="card-text text-muted small flex-grow-1">${recipe.description.substring(0, 100)}...</p>
-                                <div>
-                                    <span class="badge bg-secondary me-1">${recipe.cuisine}</span>
-                                    <span class="badge bg-info text-dark">${recipe.mealType}</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                `;
-                recipeGrid.insertAdjacentHTML('beforeend', cardHtml);
+                const col = document.createElement('div');
+                col.className = 'col-lg-4 col-md-6 mb-4';
+
+                const card = document.createElement('div');
+                card.className = 'card h-100 shadow-sm recipe-card';
+
+                // Create image element
+                const img = document.createElement('img');
+                img.alt = "";
+                img.className = 'card-img-top';
+                img.style.height = '200px';
+                img.style.objectFit = 'cover';
+
+                // Use uploaded image if available, otherwise fetch from API
+                if (recipe.image && recipe.image.startsWith('data:')) {
+                    // User uploaded image (base64)
+                    img.src = recipe.image;
+                } else {
+                    // Try to get image from TheMealDB API
+                    img.src = '../images/butterchicken.png'; // Placeholder while loading
+                    fetchRecipeImage(recipe.title, recipe.image).then(imageUrl => {
+                        img.src = imageUrl;
+                    });
+                }
+
+                const cardBody = document.createElement('div');
+                cardBody.className = 'card-body d-flex flex-column';
+
+                const title = document.createElement('h3');
+                title.className = 'card-title font-serif fw-bold mb-0';
+                const titleLink = document.createElement('a');
+                titleLink.href = `recipe.html?id=${recipe.id}`;
+                titleLink.className = 'stretched-link text-decoration-none';
+                titleLink.setAttribute('aria-label', `View details for ${recipe.title}`);
+                titleLink.textContent = recipe.title;
+                title.appendChild(titleLink);
+
+                const description = document.createElement('p');
+                description.className = 'card-text text-muted small flex-grow-1';
+                description.textContent = recipe.description.substring(0, 100) + '...';
+
+                const badges = document.createElement('div');
+                const cuisineBadge = document.createElement('span');
+                cuisineBadge.className = 'badge bg-secondary me-1';
+                cuisineBadge.textContent = recipe.cuisine;
+                const mealTypeBadge = document.createElement('span');
+                mealTypeBadge.className = 'badge bg-info text-dark';
+                mealTypeBadge.textContent = recipe.mealType;
+                badges.appendChild(cuisineBadge);
+                badges.appendChild(mealTypeBadge);
+
+                cardBody.appendChild(title);
+                cardBody.appendChild(description);
+                cardBody.appendChild(badges);
+
+                card.appendChild(img);
+                card.appendChild(cardBody);
+                col.appendChild(card);
+                recipeGrid.appendChild(col);
             });
             resultCount.textContent = `Showing ${recipes.length} recipes`;
         }
@@ -209,6 +252,38 @@
                     dropdown.options[i].style.color = '';
                 }
             }
+        }
+
+        // Fetch recipe image from TheMealDB API or use placeholder
+        async function fetchRecipeImage(recipeTitle, existingImage) {
+            const API_KEY = '65232507';
+            const API_BASE = 'https://www.themealdb.com/api/json/v2';
+            const API_SEARCH = `${API_BASE}/${API_KEY}/search.php?s=`;
+            const PLACEHOLDER = '../images/butterchicken.png';
+
+            // If there's already an image URL from the API, use it
+            if (existingImage && existingImage.startsWith('http')) {
+                try {
+                    const response = await fetch(existingImage);
+                    if (response.ok) return existingImage;
+                } catch (e) {
+                    // Image failed to load, continue to search
+                }
+            }
+
+            // Try to search by recipe title
+            try {
+                const response = await fetch(API_SEARCH + encodeURIComponent(recipeTitle));
+                const data = await response.json();
+                if (data.meals && data.meals[0] && data.meals[0].strMealThumb) {
+                    return data.meals[0].strMealThumb;
+                }
+            } catch (e) {
+                console.error('Error fetching recipe image:', e);
+            }
+
+            // Fallback to placeholder
+            return PLACEHOLDER;
         }
 
     </script>
