@@ -224,3 +224,14 @@ a:not(.btn):hover {
 .text-footer {
     color: #495057 !important;
 }
+
+/* Links on dark backgrounds should stay white */
+.bg-dark a:not(.btn),
+.card.bg-dark a:not(.btn) {
+    color: #ffffff !important;
+}
+
+.bg-dark a:not(.btn):hover,
+.card.bg-dark a:not(.btn):hover {
+    color: #ff8c42 !important;
+}
