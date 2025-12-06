@@ -434,12 +434,20 @@ function loadDetail(allRecipes) {
 
 function initStepMode(instructions) {
     let currentStep = 0;
-    const totalSteps = instructions.length;
+
+    // Filter out placeholder steps like "step 1", "step 2", etc.
+    const filteredSteps = instructions.filter(step => {
+        const cleaned = step.replace(/^\d+\.\s*/, '').trim().toLowerCase();
+        // Skip if it's just "step X" or "step X:"
+        return !cleaned.match(/^step\s+\d+:?$/);
+    });
 
     // Strip leading numbers from instructions (e.g., "1. Mix flour" -> "Mix flour")
-    const cleanedInstructions = instructions.map(step => {
+    const cleanedInstructions = filteredSteps.map(step => {
         return step.replace(/^\d+\.\s*/, '').trim();
     });
+
+    const totalSteps = cleanedInstructions.length;
 
     // Set total steps display
     document.getElementById('step-total').innerText = totalSteps;
