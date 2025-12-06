@@ -68,6 +68,11 @@ body {
     color: #6c757d !important;
 }
 
+/* Darken muted text for better contrast (WCAG AA) */
+.text-muted {
+    color: #6c757d !important;
+}
+
 /* Improve contrast for links in light backgrounds (but not buttons) */
 a:not(.btn) {
     color: #0a3e8c !important;
@@ -96,6 +101,27 @@ a:not(.btn):hover {
 
 .btn-outline-dark:hover {
     color: white !important;
+}
+
+/* Badge Contrast Fix - Ensure all badges have sufficient contrast */
+.badge {
+    color: #ffffff !important;
+    font-weight: 600;
+}
+
+.badge.bg-secondary {
+    background-color: #495057 !important;
+    color: #ffffff !important;
+}
+
+.badge.bg-info {
+    background-color: #004085 !important;
+    color: #ffffff !important;
+}
+
+.badge.bg-secondary:hover,
+.badge.bg-info:hover {
+    opacity: 0.9;
 }
 
 .recipe-intro {

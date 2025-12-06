@@ -18,7 +18,6 @@
                 <span class="fw-bold font-serif">MiTH<span class="text-orange">AI</span></span>
             </a>
             <div class="navbar-nav ms-auto">
-                <a class="nav-link" href="index.html">Home</a>
                 <a class="nav-link" href="create-recipe.html">Create Recipe</a>
             </div>
         </div>
@@ -33,7 +32,7 @@
                 </div>
             </div>
             <div id="rating-container" class="my-4 text-center" style="display:none;">
-                <h5 class="mb-2">Rate this recipe:</h5>
+                <h3 class="mb-2">Rate this recipe:</h3>
                 <div id="star-rating" class="mb-2"></div>
                 <div id="avg-rating" class="text-muted small"></div>
             </div>
@@ -125,13 +124,13 @@
                     <img src="${imgUrl}" alt="${recipe.title}" class="img-fluid rounded-3 shadow-sm recipe-detail-img">
                 </div>
                 
-                <h3 class="fw-bold mt-5">Ingredients</h3>
+                <h2 class="fw-bold mt-5">Ingredients</h2>
                 <ul class="list-group list-group-flush mb-4">
                     ${recipe.ingredients.map(ing => `<li class="list-group-item">${ing}</li>`).join('')}
                 </ul>
 
                 <div class="d-flex justify-content-between align-items-center mt-4">
-                    <h3 class="fw-bold">Instructions</h3>
+                    <h2 class="fw-bold">Instructions</h2>
                     <button class="btn btn-orange btn-sm" onclick="startCookingMode()">
                         <i class="fas fa-utensils me-1"></i> Start Cooking Mode
                     </button>
@@ -139,7 +138,7 @@
                 <div id="detail-instructions"></div>
                 
                 <div id="rating-container" class="my-4 text-center border-top pt-4">
-                    <h5 class="mb-3">Rate this recipe:</h5>
+                    <h3 class="mb-3">Rate this recipe:</h3>
                     <div id="star-rating" class="mb-2"></div>
                     <div id="avg-rating" class="text-muted small"></div>
                 </div>
@@ -170,7 +169,7 @@
                 // Format with h3 headers
                 instList.innerHTML = filteredSteps.map((step, index) => {
                     const cleanStep = step.replace(/^\d+\.\s*/, '').trim();
-                    return `<h3 class="h5 font-serif fw-bold mt-4 mb-2">Step ${index + 1}:</h3><p>${cleanStep}</p>`;
+                    return `<h3 class="h4 font-serif fw-bold mt-4 mb-2">Step ${index + 1}:</h3><p>${cleanStep}</p>`;
                 }).join('');
             }
         }
