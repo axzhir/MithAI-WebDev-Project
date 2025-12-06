@@ -405,7 +405,19 @@ function loadDetail(allRecipes) {
 
         const instList = document.getElementById('detail-instructions');
         if (recipe.instructions && instList) {
-            instList.innerHTML = recipe.instructions.map(step => `<li class="list-group-item">${step}</li>`).join('');
+            // Filter out placeholder steps like "step 1", "step 2", "1. step 1", etc.
+            // and strip leading numbers from remaining instructions
+            const filteredSteps = recipe.instructions.filter(step => {
+                const cleaned = step.replace(/^\d+\.\s*/, '').trim().toLowerCase();
+                // Skip if it's just "step X" or "step X:"
+                return !cleaned.match(/^step\s+\d+:?$/);
+            });
+
+            instList.innerHTML = filteredSteps.map((step, index) => {
+                // Strip leading numbers from the instruction (e.g., "1. Mix flour" -> "Mix flour")
+                const cleanStep = step.replace(/^\d+\.\s*/, '').trim();
+                return `<h3 class="h5 font-serif fw-bold mt-4 mb-2">Step ${index + 1}:</h3><p>${cleanStep}</p>`;
+            }).join('');
         }
 
         const ingList = document.getElementById('detail-ingredients');
@@ -424,12 +436,17 @@ function initStepMode(instructions) {
     let currentStep = 0;
     const totalSteps = instructions.length;
 
+    // Strip leading numbers from instructions (e.g., "1. Mix flour" -> "Mix flour")
+    const cleanedInstructions = instructions.map(step => {
+        return step.replace(/^\d+\.\s*/, '').trim();
+    });
+
     // Set total steps display
     document.getElementById('step-total').innerText = totalSteps;
 
     // Update step display
     function updateStepDisplay() {
-        document.getElementById('step-content').innerText = instructions[currentStep];
+        document.getElementById('step-content').innerText = cleanedInstructions[currentStep];
         document.getElementById('step-number').innerHTML = `Step ${currentStep + 1} of <span id="step-total">${totalSteps}</span>`;
 
         // Enable/disable buttons based on position
