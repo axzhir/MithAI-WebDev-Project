@@ -187,7 +187,6 @@
             // Load ratings from localStorage
             const ratingsKey = 'mithai_ratings';
             const ratings = JSON.parse(localStorage.getItem(ratingsKey)) || {};
-            const recipeRatings = ratings[recipeId] || [];
             const userRating = parseInt(localStorage.getItem('mithai_rating_' + recipeId)) || 0;
 
             function renderStars(selected) {
@@ -206,11 +205,16 @@
 
                     star.addEventListener('click', function () {
                         const val = parseInt(this.dataset.value);
+
+                        // Update user's rating (replaces old rating if exists)
                         localStorage.setItem('mithai_rating_' + recipeId, val);
 
-                        // Save rating to ratings array
-                        if (!ratings[recipeId]) ratings[recipeId] = [];
-                        ratings[recipeId].push(val);
+                        // Store as object with user's rating, not as array
+                        if (!ratings[recipeId]) {
+                            ratings[recipeId] = val;
+                        } else {
+                            ratings[recipeId] = val;
+                        }
                         localStorage.setItem(ratingsKey, JSON.stringify(ratings));
 
                         renderStars(val);
@@ -229,12 +233,13 @@
             }
 
             function renderAvg() {
-                const arr = ratings[recipeId] || [];
-                if (arr.length === 0) {
+                // Get all ratings from all users
+                const allRatings = Object.values(ratings).filter(r => typeof r === 'number');
+                if (allRatings.length === 0) {
                     avgRating.textContent = 'No ratings yet';
                 } else {
-                    const avg = (arr.reduce((a, b) => a + b, 0) / arr.length).toFixed(1);
-                    avgRating.textContent = `Average: ${avg}/5.0 (${arr.length} ${arr.length === 1 ? 'vote' : 'votes'})`;
+                    const avg = (allRatings.reduce((a, b) => a + b, 0) / allRatings.length).toFixed(1);
+                    avgRating.textContent = `Average: ${avg}/5.0 (${allRatings.length} ${allRatings.length === 1 ? 'vote' : 'votes'})`;
                 }
             }
 
