@@ -136,9 +136,7 @@
                         <i class="fas fa-utensils me-1"></i> Start Cooking Mode
                     </button>
                 </div>
-                <ol class="list-group list-group-numbered list-group-flush">
-                    ${recipe.instructions.map(step => `<li class="list-group-item">${step}</li>`).join('')}
-                </ol>
+                <div id="detail-instructions"></div>
                 
                 <div id="rating-container" class="my-4 text-center border-top pt-4">
                     <h5 class="mb-3">Rate this recipe:</h5>
@@ -149,8 +147,33 @@
 
                 // Initialize rating system after recipe content is loaded
                 initializeRatingSystem(recipeId);
+
+                // Load and format instructions with filtering
+                loadDetail(recipe);
+
+                // Initialize cooking mode
+                initStepMode(recipe.instructions);
+
+                // Initialize rating system after recipe content is loaded
+                initializeRatingSystem(recipeId);
             });
         });
+
+        function loadDetail(recipe) {
+            const instList = document.getElementById('detail-instructions');
+            if (recipe.instructions && instList) {
+                // Filter out placeholder steps like "step 1", "step 2"
+                const filteredSteps = recipe.instructions.filter(step => {
+                    const cleaned = step.replace(/^\d+\.\s*/, '').trim().toLowerCase();
+                    return !cleaned.match(/^step\s+\d+:?$/);
+                });
+                // Format with h3 headers
+                instList.innerHTML = filteredSteps.map((step, index) => {
+                    const cleanStep = step.replace(/^\d+\.\s*/, '').trim();
+                    return `<h3 class="h5 font-serif fw-bold mt-4 mb-2">Step ${index + 1}:</h3><p>${cleanStep}</p>`;
+                }).join('');
+            }
+        }
 
         function initializeRatingSystem(recipeId) {
             const ratingContainer = document.getElementById('rating-container');
@@ -219,10 +242,24 @@
             renderAvg();
         }
 
-        // Cooking Mode Functions
         let currentStep = 0;
         let recipeSteps = [];
         let cookingModal = null;
+
+        function initStepMode(instructions) {
+            // Filter out placeholder steps
+            const filteredSteps = instructions.filter(step => {
+                const cleaned = step.replace(/^\d+\.\s*/, '').trim().toLowerCase();
+                return !cleaned.match(/^step\s+\d+:?$/);
+            });
+
+            // Strip numbers and create cleaned array
+            recipeSteps = filteredSteps.map(step => {
+                return step.replace(/^\d+\.\s*/, '').trim();
+            });
+
+            currentStep = 0;
+        }
 
         function startCookingMode() {
             const params = new URLSearchParams(window.location.search);
@@ -235,7 +272,14 @@
                 return;
             }
 
-            recipeSteps = recipe.instructions;
+            // Initialize and filter steps
+            initStepMode(recipe.instructions);
+
+            if (recipeSteps.length === 0) {
+                alert('No valid instructions found for this recipe.');
+                return;
+            }
+
             currentStep = 0;
 
             if (!cookingModal) {
