@@ -209,3 +209,18 @@ a:not(.btn):hover {
 .text-light-accessible {
     color: #adb5bd !important;
 }
+
+/* Accessible orange on white backgrounds (darker for better contrast) */
+.text-orange-dark {
+    color: #8b3500 !important;
+}
+
+/* Accessible orange on dark backgrounds (lighter/more saturated for better contrast) */
+.text-orange-light {
+    color: #ff8c42 !important;
+}
+
+/* Accessible footer text */
+.text-footer {
+    color: #495057 !important;
+}
