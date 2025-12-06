@@ -204,3 +204,8 @@ a:not(.btn):hover {
     max-height: 320px;
     object-fit: cover;
 }
+
+/* Accessible light text on dark backgrounds */
+.text-light-accessible {
+    color: #adb5bd !important;
+}
