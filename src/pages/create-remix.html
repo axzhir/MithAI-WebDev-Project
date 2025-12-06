@@ -29,17 +29,17 @@
             <input type="hidden" id="parentId">
 
             <div class="mb-3">
-                <label class="form-label fw-bold">Remix Name</label>
+                <label for="remixTitle" class="form-label fw-bold">Remix Name</label>
                 <input type="text" class="form-control" id="remixTitle" required>
             </div>
 
             <div class="mb-3">
-                <label class="form-label fw-bold">What did you change?</label>
+                <label for="remixLog" class="form-label fw-bold">What did you change?</label>
                 <input type="text" class="form-control" id="remixLog" placeholder="e.g. Added extra garlic">
             </div>
 
             <div class="mb-3">
-                <label class="form-label fw-bold">My Rating</label>
+                <label for="remixRating" class="form-label fw-bold">My Rating</label>
                 <select class="form-select" id="remixRating">
                     <option value="5">5 Stars</option>
                     <option value="4">4 Stars</option>
@@ -49,7 +49,7 @@
                 </select>
             </div>
 
-            <button type="submit" class="btn btn-warning text-white">Save Remix</button>
+            <button type="submit" class="btn btn-orange">Save Remix</button>
         </form>
     </div>
     <!-- Load app script to handle remix save and parent prefill -->

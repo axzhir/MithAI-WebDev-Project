@@ -235,3 +235,15 @@ a:not(.btn):hover {
 .card.bg-dark a:not(.btn):hover {
     color: #ff8c42 !important;
 }
+
+/* Improve placeholder contrast for accessibility */
+.form-control::placeholder,
+.form-select::placeholder {
+    color: #6c757d !important;
+    opacity: 1;
+}
+
+/* Step-by-Step Cooking Mode */
+#step-content {
+    min-height: 100px;
+}

@@ -412,7 +412,49 @@ function loadDetail(allRecipes) {
         if (recipe.ingredients && ingList) {
             ingList.innerHTML = recipe.ingredients.map(ing => `<li class="list-group-item">${ing}</li>`).join('');
         }
+
+        // Initialize step-by-step mode
+        if (recipe.instructions) {
+            initStepMode(recipe.instructions);
+        }
     }
+}
+
+function initStepMode(instructions) {
+    let currentStep = 0;
+    const totalSteps = instructions.length;
+
+    // Set total steps display
+    document.getElementById('step-total').innerText = totalSteps;
+
+    // Update step display
+    function updateStepDisplay() {
+        document.getElementById('step-content').innerText = instructions[currentStep];
+        document.getElementById('step-number').innerHTML = `Step ${currentStep + 1} of <span id="step-total">${totalSteps}</span>`;
+
+        // Enable/disable buttons based on position
+        document.getElementById('prev-step').disabled = currentStep === 0;
+        document.getElementById('next-step').disabled = currentStep === totalSteps - 1;
+    }
+
+    // Next button handler
+    document.getElementById('next-step').addEventListener('click', () => {
+        if (currentStep < totalSteps - 1) {
+            currentStep++;
+            updateStepDisplay();
+        }
+    });
+
+    // Previous button handler
+    document.getElementById('prev-step').addEventListener('click', () => {
+        if (currentStep > 0) {
+            currentStep--;
+            updateStepDisplay();
+        }
+    });
+
+    // Show first step
+    updateStepDisplay();
 }
 
 function setupRemixPage(allRecipes) {

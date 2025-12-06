@@ -46,6 +46,10 @@
                             data-bs-target="#inst" type="button">Instructions</button>
                     </li>
                     <li class="nav-item">
+                        <button class="nav-link text-dark" id="step-tab" data-bs-toggle="tab" data-bs-target="#step"
+                            type="button">Step by Step</button>
+                    </li>
+                    <li class="nav-item">
                         <button class="nav-link text-dark" id="ing-tab" data-bs-toggle="tab" data-bs-target="#ing"
                             type="button">Ingredients</button>
                     </li>
@@ -54,6 +58,23 @@
                     <div class="tab-pane fade show active" id="inst">
                         <ol class="list-group list-group-numbered list-group-flush" id="detail-instructions">
                         </ol>
+                    </div>
+                    <div class="tab-pane fade" id="step">
+                        <div class="text-center py-5">
+                            <div class="card border-0 shadow-sm p-5 mb-4">
+                                <h3 class="font-serif fw-bold mb-4" id="step-number">Step 1 of <span
+                                        id="step-total">0</span></h3>
+                                <p class="lead text-dark" id="step-content">Loading...</p>
+                            </div>
+                            <div class="d-flex gap-3 justify-content-center">
+                                <button type="button" class="btn btn-orange" id="prev-step" disabled>
+                                    <i class="fas fa-chevron-left me-2"></i>Previous
+                                </button>
+                                <button type="button" class="btn btn-orange" id="next-step">
+                                    Next<i class="fas fa-chevron-right ms-2"></i>
+                                </button>
+                            </div>
+                        </div>
                     </div>
                     <div class="tab-pane fade" id="ing">
                         <ul class="list-group list-group-flush" id="detail-ingredients">
