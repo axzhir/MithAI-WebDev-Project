@@ -107,15 +107,17 @@ a:not(.btn):hover {
 .badge {
     color: #ffffff !important;
     font-weight: 600;
+    background-color: #212529; /* ADD THIS: Sets a default black background */
+}
+
+/* ADD THIS: Forces "light" badges to be black so the white text is visible */
+.badge.bg-light {
+    background-color: #212529 !important;
+    color: #ffffff !important;
 }
 
 .badge.bg-secondary {
     background-color: #495057 !important;
-    color: #ffffff !important;
-}
-
-.badge.bg-info {
-    background-color: #004085 !important;
     color: #ffffff !important;
 }
 
