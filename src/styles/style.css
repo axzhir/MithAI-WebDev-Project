@@ -132,6 +132,11 @@ a:not(.btn):hover {
     color: #ffffff !important;
 }
 
+.badge.bg-secondary {
+    background-color: #495057 !important;
+    color: #ffffff !important;
+}
+
 .badge.bg-info {
     background-color: #0d7cc0 !important;
     color: #ffffff !important;
