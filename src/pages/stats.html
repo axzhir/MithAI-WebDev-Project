@@ -85,11 +85,16 @@
                     <button type="button" onclick="exportData()" class="btn btn-dark w-100 mb-2">
                         <i class="fas fa-download"></i> Export Data (JSON)
                     </button>
+                    <button type="button" id="importJsonBtn" class="btn btn-dark w-100 mb-2">
+                        <i class="fas fa-upload"></i> Import JSON
+                    </button>
+                    <input type="file" id="importJsonInput" accept=".json" style="display: none;">
                     <button type="button" id="openClearDataModal" class="btn btn-outline-danger w-100">
                         <i class="fas fa-trash"></i> Clear All Data
                     </button>
                     <!-- Clear Data Confirmation Modal -->
-                    <div class="modal fade" id="clearDataModal" tabindex="-1" aria-labelledby="clearDataModalLabel" role="dialog">
+                    <div class="modal fade" id="clearDataModal" tabindex="-1" aria-labelledby="clearDataModalLabel"
+                        role="dialog">
                         <div class="modal-dialog modal-dialog-centered">
                             <div class="modal-content">
                                 <div class="modal-header">
@@ -126,6 +131,48 @@
                 confirmBtn.addEventListener('click', () => {
                     // Clear only user-made data
                     clearData();
+                });
+            }
+
+            // Import JSON functionality
+            const importBtn = document.getElementById('importJsonBtn');
+            const importInput = document.getElementById('importJsonInput');
+
+            if (importBtn && importInput) {
+                importBtn.addEventListener('click', () => {
+                    importInput.click();
+                });
+
+                importInput.addEventListener('change', (event) => {
+                    const file = event.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = (e) => {
+                            try {
+                                const jsonData = JSON.parse(e.target.result);
+                                // Import data using correct localStorage keys
+                                if (jsonData && Array.isArray(jsonData)) {
+                                    // If the imported data is an array, treat it as recipes
+                                    localStorage.setItem('mithai_recipes', JSON.stringify(jsonData));
+                                } else {
+                                    // Otherwise expect an object with recipes and remixes
+                                    if (jsonData.recipes) {
+                                        localStorage.setItem('mithai_recipes', JSON.stringify(jsonData.recipes));
+                                    }
+                                    if (jsonData.remixes) {
+                                        localStorage.setItem('mithai-remixes', JSON.stringify(jsonData.remixes));
+                                    }
+                                }
+                                alert('Data imported successfully!');
+                                location.reload();
+                            } catch (error) {
+                                alert('Error importing JSON: ' + error.message);
+                            }
+                        };
+                        reader.readAsText(file);
+                    }
+                    // Reset input so same file can be imported again if needed
+                    event.target.value = '';
                 });
             }
         });

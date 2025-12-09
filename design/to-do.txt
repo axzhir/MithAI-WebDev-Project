@@ -11,7 +11,3 @@ Or multiple calls that execute concurrently
 Don't forget to use a browser-ready, client-side JavaScript library
 See Awesome JavaScriptLinks to an external site. (anything from the "Files" section onwards)
 You're looking for "browser-ready" libraries; avoid anything that uses "npm" or "node", etc.
-
-Bugs to Fix:
-Check to see if it passes WAVE
-Push to generation

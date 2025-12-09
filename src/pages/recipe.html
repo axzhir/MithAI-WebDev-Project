@@ -131,9 +131,14 @@
 
                 <div class="d-flex justify-content-between align-items-center mt-4">
                     <h2 class="fw-bold">Instructions</h2>
-                    <button class="btn btn-orange btn-sm" onclick="startCookingMode()">
-                        <i class="fas fa-utensils me-1"></i> Start Cooking Mode
-                    </button>
+                    <div class="d-flex gap-2">
+                        <a href="create-remix.html?parentId=${recipe.id}" class="btn btn-outline-orange btn-sm">
+                            <i class="fas fa-code-branch me-1"></i> Create Remix
+                        </a>
+                        <button class="btn btn-orange btn-sm" onclick="startCookingMode()">
+                            <i class="fas fa-utensils me-1"></i> Start Cooking Mode
+                        </button>
+                    </div>
                 </div>
                 <div id="detail-instructions"></div>
                 

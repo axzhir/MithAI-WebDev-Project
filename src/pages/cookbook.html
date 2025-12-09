@@ -228,9 +228,19 @@
                 badges.appendChild(cuisineBadge);
                 badges.appendChild(mealTypeBadge);
 
+                // Add remix button
+                const remixButtonDiv = document.createElement('div');
+                remixButtonDiv.className = 'mt-3 pt-2 border-top';
+                const remixButton = document.createElement('a');
+                remixButton.href = `create-remix.html?parentId=${recipe.id}`;
+                remixButton.className = 'btn btn-sm btn-outline-orange w-100';
+                remixButton.innerHTML = '<i class="fas fa-code-branch me-2"></i>Create Remix';
+                remixButtonDiv.appendChild(remixButton);
+
                 cardBody.appendChild(title);
                 cardBody.appendChild(description);
                 cardBody.appendChild(badges);
+                cardBody.appendChild(remixButtonDiv);
 
                 card.appendChild(img);
                 card.appendChild(cardBody);

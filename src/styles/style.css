@@ -36,6 +36,17 @@ body {
     color: white !important;
 }
 
+.btn-outline-orange {
+    color: var(--primary-orange) !important;
+    border-color: var(--primary-orange) !important;
+}
+
+.btn-outline-orange:hover {
+    background-color: var(--primary-orange) !important;
+    border-color: var(--primary-orange) !important;
+    color: white !important;
+}
+
 /* Custom Button Hover Effects */
 .hover-orange:hover {
     background-color: var(--primary-orange) !important;
@@ -70,7 +81,7 @@ body {
 
 /* Darken muted text for better contrast (WCAG AA) */
 .text-muted {
-    color: #6c757d !important;
+    color: #495057 !important;
 }
 
 /* Improve contrast for links in light backgrounds (but not buttons) */
@@ -107,6 +118,13 @@ a:not(.btn):hover {
 .badge {
     color: #ffffff !important;
     font-weight: 600;
+    background-color: #212529; /* ADD THIS: Sets a default black background */
+}
+
+/* ADD THIS: Forces "light" badges to be black so the white text is visible */
+.badge.bg-light {
+    background-color: #212529 !important;
+    color: #ffffff !important;
 }
 
 .badge.bg-secondary {
@@ -115,7 +133,7 @@ a:not(.btn):hover {
 }
 
 .badge.bg-info {
-    background-color: #004085 !important;
+    background-color: #0d7cc0 !important;
     color: #ffffff !important;
 }
 
