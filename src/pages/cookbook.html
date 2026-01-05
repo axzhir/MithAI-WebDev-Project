@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cookbook - MiTHAI</title>
+    <link rel="icon" type="image/png" href="../images/logo.png">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="../styles/style.css">
+</head>
+
+<body class="bg-light text-dark">
+    <nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top border-bottom">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center gap-2" href="index.html">
+                <img src="../images/logo.png" alt="MiTHAI Logo" height="40">
+                <span class="fw-bold font-serif">MiTH<span class="text-orange">AI</span></span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item"><a class="nav-link" href="index.html">Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="cookbook.html">Recipes</a></li>
+                    <li class="nav-item"><a class="nav-link" href="stats.html">Insights</a></li>
+                    <li class="nav-item"><a class="nav-link" href="about.html">About</a></li>
+                    <li class="nav-item ms-2"><a href="create-recipe.html"
+                            class="btn btn-dark rounded-pill px-4 hover-orange">New Recipe</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container py-5">
+        <div class="row">
+            <div class="col-lg-3 mb-4">
+                <div class="card border-0 shadow-sm p-3">
+                    <h2 class="font-serif fw-bold mb-3 sidebar-heading">Organize By</h2>
+                    <div class="mb-4">
+                        <label for="searchInput" class="fw-bold text-orange text-uppercase small mb-2">Recipe
+                            Name</label>
+                        <input type="text" id="searchInput" class="form-control" placeholder="e.g., Butter Chicken">
+                    </div>
+                    <div class="mb-3">
+                        <label for="cuisineDropdown" class="fw-bold text-orange text-uppercase small mb-2">Culture /
+                            Cuisine</label>
+                        <select id="cuisineDropdown" class="form-select mb-2">
+                            <option value="all">All Cuisines</option>
+                            <option value="General">General</option>
+                            <option value="East Asian">East Asian</option>
+                            <option value="South Asian">South Asian</option>
+                            <option value="Western">Western</option>
+                            <option value="European">European</option>
+                            <option value="African">African</option>
+                            <option value="Middle Eastern">Middle Eastern</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="typeDropdown" class="fw-bold text-orange text-uppercase small mb-2">Meal
+                            Type</label>
+                        <select id="typeDropdown" class="form-select mb-2">
+                            <option value="all">All Types</option>
+                            <option value="Breakfast">Breakfast</option>
+                            <option value="Lunch">Lunch</option>
+                            <option value="Dinner">Dinner</option>
+                            <option value="Snack">Snacks</option>
+                            <option value="Dessert">Desserts</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="ingredientSearch" class="fw-bold text-orange text-uppercase small mb-2">By
+                            Ingredient</label>
+                        <input type="text" id="ingredientSearch" class="form-control"
+                            placeholder="e.g., chicken, tomato...">
+                        <small class="form-text">Search for recipes containing this ingredient</small>
+                    </div>
+                    <button id="clearFiltersBtn" type="button" class="btn btn-outline-dark w-100 mt-2">Clear
+                        Filters</button>
+                </div>
+            </div>
+
+            <div class="col-lg-9">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h1 class="font-serif fw-bold m-0">My Cookbook</h1>
+                    <span class="text-muted small" id="resultCount">Showing all recipes</span>
+                </div>
+
+                <div id="recipe-grid" class="row g-4">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Note: The main script.js is not needed here as it's for the create-recipe page -->
+    <script>
+        let allRecipes = [];
+        let filteredRecipes = [];
+        let selectedCuisine = 'all';
+        let selectedType = 'all';
+        let searchQuery = '';
+        let ingredientQuery = '';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            allRecipes = JSON.parse(localStorage.getItem('mithai_recipes')) || [];
+            filteredRecipes = [...allRecipes];
+            renderRecipes(filteredRecipes);
+
+            // Dropdown filter listeners
+            document.getElementById('cuisineDropdown').addEventListener('change', (e) => {
+                selectedCuisine = e.target.value;
+                applyFilters();
+                highlightSelected('cuisineDropdown', selectedCuisine);
+            });
+            document.getElementById('typeDropdown').addEventListener('change', (e) => {
+                selectedType = e.target.value;
+                applyFilters();
+                highlightSelected('typeDropdown', selectedType);
+            });
+            document.getElementById('searchInput').addEventListener('input', (e) => {
+                searchQuery = e.target.value.trim().toLowerCase();
+                applyFilters();
+            });
+            document.getElementById('ingredientSearch').addEventListener('input', (e) => {
+                ingredientQuery = e.target.value.trim().toLowerCase();
+                applyFilters();
+            });
+            document.getElementById('clearFiltersBtn').addEventListener('click', () => {
+                selectedCuisine = 'all';
+                selectedType = 'all';
+                searchQuery = '';
+                ingredientQuery = '';
+                document.getElementById('cuisineDropdown').value = 'all';
+                document.getElementById('typeDropdown').value = 'all';
+                document.getElementById('searchInput').value = '';
+                document.getElementById('ingredientSearch').value = '';
+                applyFilters();
+                highlightSelected('cuisineDropdown', 'all');
+                highlightSelected('typeDropdown', 'all');
+            });
+
+
+            // Initial highlight
+            highlightSelected('cuisineDropdown', 'all');
+            highlightSelected('typeDropdown', 'all');
+        });
+
+        function applyFilters() {
+            filteredRecipes = allRecipes.filter(recipe => {
+                let cuisineMatch = selectedCuisine === 'all' || recipe.cuisine === selectedCuisine;
+                let typeMatch = selectedType === 'all' || recipe.mealType === selectedType;
+                let searchMatch = !searchQuery || recipe.title.toLowerCase().includes(searchQuery) || recipe.description.toLowerCase().includes(searchQuery);
+                let ingredientMatch = !ingredientQuery || (recipe.ingredients && recipe.ingredients.some(ing =>
+                    String(ing).toLowerCase().includes(ingredientQuery)
+                ));
+                return cuisineMatch && typeMatch && searchMatch && ingredientMatch;
+            });
+            renderRecipes(filteredRecipes);
+        }
+
+        function renderRecipes(recipes) {
+            const recipeGrid = document.getElementById('recipe-grid');
+            const resultCount = document.getElementById('resultCount');
+            recipeGrid.innerHTML = '';
+            if (recipes.length === 0) {
+                recipeGrid.innerHTML = `
+                    <div class="col-12 text-center py-5 text-muted">
+                        <p class="lead">No recipes found.</p>
+                        <p>Try adjusting your filters or use the "New Recipe" button in the navigation.</p>
+                    </div>
+                `;
+                resultCount.textContent = 'Showing 0 recipes';
+                return;
+            }
+            recipes.forEach(recipe => {
+                const col = document.createElement('div');
+                col.className = 'col-lg-4 col-md-6 mb-4';
+
+                const card = document.createElement('div');
+                card.className = 'card h-100 shadow-sm recipe-card';
+
+                // Create image element
+                const img = document.createElement('img');
+                img.alt = "";
+                img.className = 'card-img-top';
+                img.style.height = '200px';
+                img.style.objectFit = 'cover';
+
+                // Use uploaded image if available, otherwise fetch from API
+                if (recipe.image && recipe.image.startsWith('data:')) {
+                    // User uploaded image (base64)
+                    img.src = recipe.image;
+                } else {
+                    // Try to get image from TheMealDB API
+                    img.src = '../images/butterchicken.png'; // Placeholder while loading
+                    fetchRecipeImage(recipe.title, recipe.image).then(imageUrl => {
+                        img.src = imageUrl;
+                    });
+                }
+
+                const cardBody = document.createElement('div');
+                cardBody.className = 'card-body d-flex flex-column';
+
+                const title = document.createElement('h3');
+                title.className = 'card-title font-serif fw-bold mb-0';
+                const titleLink = document.createElement('a');
+                titleLink.href = `recipe.html?id=${recipe.id}`;
+                titleLink.className = 'stretched-link text-decoration-none';
+                titleLink.setAttribute('aria-label', `View details for ${recipe.title}`);
+                titleLink.textContent = recipe.title;
+                title.appendChild(titleLink);
+
+                const description = document.createElement('p');
+                description.className = 'card-text text-muted small flex-grow-1';
+                description.textContent = recipe.description.substring(0, 100) + '...';
+
+                const badges = document.createElement('div');
+                const cuisineBadge = document.createElement('span');
+                cuisineBadge.className = 'badge bg-secondary me-1';
+                cuisineBadge.textContent = recipe.cuisine;
+                const mealTypeBadge = document.createElement('span');
+                mealTypeBadge.className = 'badge bg-info text-dark';
+                mealTypeBadge.textContent = recipe.mealType;
+                badges.appendChild(cuisineBadge);
+                badges.appendChild(mealTypeBadge);
+
+                // Add remix button
+                const remixButtonDiv = document.createElement('div');
+                remixButtonDiv.className = 'mt-3 pt-2 border-top';
+                const remixButton = document.createElement('a');
+                remixButton.href = `create-remix.html?parentId=${recipe.id}`;
+                remixButton.className = 'btn btn-sm btn-outline-orange w-100';
+                remixButton.innerHTML = '<i class="fas fa-code-branch me-2"></i>Create Remix';
+                remixButtonDiv.appendChild(remixButton);
+
+                cardBody.appendChild(title);
+                cardBody.appendChild(description);
+                cardBody.appendChild(badges);
+                cardBody.appendChild(remixButtonDiv);
+
+                card.appendChild(img);
+                card.appendChild(cardBody);
+                col.appendChild(card);
+                recipeGrid.appendChild(col);
+            });
+            resultCount.textContent = `Showing ${recipes.length} recipes`;
+        }
+
+        // Highlight selected filter in orange (for dropdowns, change background and text color)
+        function highlightSelected(dropdownId, value) {
+            const dropdown = document.getElementById(dropdownId);
+            for (let i = 0; i < dropdown.options.length; i++) {
+                if (dropdown.options[i].value === value) {
+                    dropdown.options[i].style.backgroundColor = '#b34700';
+                    dropdown.options[i].style.color = '#fff';
+                } else {
+                    dropdown.options[i].style.backgroundColor = '';
+                    dropdown.options[i].style.color = '';
+                }
+            }
+        }
+
+        // Fetch recipe image from TheMealDB API or use placeholder
+        async function fetchRecipeImage(recipeTitle, existingImage) {
+            const API_KEY = '65232507';
+            const API_BASE = 'https://www.themealdb.com/api/json/v2';
+            const API_SEARCH = `${API_BASE}/${API_KEY}/search.php?s=`;
+            const PLACEHOLDER = '../images/butterchicken.png';
+
+            // If there's already an image URL from the API, use it
+            if (existingImage && existingImage.startsWith('http')) {
+                try {
+                    const response = await fetch(existingImage);
+                    if (response.ok) return existingImage;
+                } catch (e) {
+                    // Image failed to load, continue to search
+                }
+            }
+
+            // Try to search by recipe title
+            try {
+                const response = await fetch(API_SEARCH + encodeURIComponent(recipeTitle));
+                const data = await response.json();
+                if (data.meals && data.meals[0] && data.meals[0].strMealThumb) {
+                    return data.meals[0].strMealThumb;
+                }
+            } catch (e) {
+                console.error('Error fetching recipe image:', e);
+            }
+
+            // Fallback to placeholder
+            return PLACEHOLDER;
+        }
+
+    </script>
+</body>
+
+</html>

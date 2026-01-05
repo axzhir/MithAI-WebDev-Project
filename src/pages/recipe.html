@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipe Details - MiTHAI</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="../styles/style.css">
+</head>
+
+<body class="bg-light text-dark theme-pakistan">
+    <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center gap-2" href="index.html">
+                <img src="../images/logo.png" alt="MiTHAI Logo" height="36">
+                <span class="fw-bold font-serif">MiTH<span class="text-orange">AI</span></span>
+            </a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="create-recipe.html">Create Recipe</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container py-5">
+        <div id="recipe-content" class="bg-white p-5 rounded-4 shadow-sm border">
+            <!-- Recipe content will be loaded here by JavaScript -->
+            <div class="text-center">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+            <div id="rating-container" class="my-4 text-center" style="display:none;">
+                <h3 class="mb-2">Rate this recipe:</h3>
+                <div id="star-rating" class="mb-2"></div>
+                <div id="avg-rating" class="text-muted small"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cooking Mode Modal -->
+    <div class="modal fade" id="cookingModal" tabindex="-1" aria-labelledby="cookingModalLabel" role="dialog">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-orange text-white">
+                    <h5 class="modal-title" id="cookingModalLabel">
+                        <i class="fas fa-utensils me-2"></i>Cooking Mode
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div class="text-center mb-3">
+                        <span class="badge bg-secondary" id="stepCounter">Step 1 of X</span>
+                    </div>
+                    <div id="stepContent" class="text-center p-4 step-content">
+                        Loading...
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" id="prevStepBtn" onclick="previousStep()">
+                        <i class="fas fa-arrow-left me-1"></i> Previous
+                    </button>
+                    <button type="button" class="btn btn-orange" id="nextStepBtn" onclick="nextStep()">
+                        Next <i class="fas fa-arrow-right ms-1"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const recipeContent = document.getElementById('recipe-content');
+            const params = new URLSearchParams(window.location.search);
+            const recipeId = parseInt(params.get('id'));
+
+            if (!recipeId) {
+                recipeContent.innerHTML = '<h1 class="text-center">Recipe not found!</h1>';
+                return;
+            }
+
+            // Read from canonical key with legacy fallback
+            const recipes = JSON.parse(localStorage.getItem('mithai_recipes')) || JSON.parse(localStorage.getItem('mithai-recipes')) || [];
+            const recipe = recipes.find(r => r.id === recipeId);
+
+            if (!recipe) {
+                recipeContent.innerHTML = '<h1 class="text-center">Recipe not found!</h1>';
+                return;
+            }
+
+            document.title = `${recipe.title} - MiTHAI`;
+
+            // Resolve an image: prefer stored image, else TheMealDB by title, else local fallback
+            const API_KEY = '65232507';
+            const API_BASE = 'https://www.themealdb.com/api/json/v2';
+            const API_SEARCH = `${API_BASE}/${API_KEY}/search.php?s=`;
+
+            async function resolveImage() {
+                if (recipe.image) return recipe.image;
+                try {
+                    const resp = await fetch(API_SEARCH + encodeURIComponent(recipe.title));
+                    const data = await resp.json();
+                    const url = data?.meals?.[0]?.strMealThumb;
+                    if (url) return url;
+                } catch (e) { }
+                return '../images/butterchicken.png';
+            }
+
+            resolveImage().then(imgUrl => {
+                recipeContent.innerHTML = `
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h1 class="font-serif fw-bold">${recipe.title}</h1>
+                    <div>
+                        <span class="badge bg-secondary me-2">${recipe.cuisine}</span>
+                        <span class="badge bg-info">${recipe.mealType}</span>
+                    </div>
+                </div>
+                <p class="lead mb-4">${recipe.description}</p>
+                <div class="text-center mb-4">
+                    <img src="${imgUrl}" alt="${recipe.title}" class="img-fluid rounded-3 shadow-sm recipe-detail-img">
+                </div>
+                
+                <h2 class="fw-bold mt-5">Ingredients</h2>
+                <ul class="list-group list-group-flush mb-4">
+                    ${recipe.ingredients.map(ing => `<li class="list-group-item">${ing}</li>`).join('')}
+                </ul>
+
+                <div class="d-flex justify-content-between align-items-center mt-4">
+                    <h2 class="fw-bold">Instructions</h2>
+                    <div class="d-flex gap-2">
+                        <a href="create-remix.html?parentId=${recipe.id}" class="btn btn-outline-orange btn-sm">
+                            <i class="fas fa-code-branch me-1"></i> Create Remix
+                        </a>
+                        <button class="btn btn-orange btn-sm" onclick="startCookingMode()">
+                            <i class="fas fa-utensils me-1"></i> Start Cooking Mode
+                        </button>
+                    </div>
+                </div>
+                <div id="detail-instructions"></div>
+                
+                <div id="rating-container" class="my-4 text-center border-top pt-4">
+                    <h3 class="mb-3">Rate this recipe:</h3>
+                    <div id="star-rating" class="mb-2"></div>
+                    <div id="avg-rating" class="text-muted small"></div>
+                </div>
+            `;
+
+                // Initialize rating system after recipe content is loaded
+                initializeRatingSystem(recipeId);
+
+                // Load and format instructions with filtering
+                loadDetail(recipe);
+
+                // Initialize cooking mode
+                initStepMode(recipe.instructions);
+
+                // Initialize rating system after recipe content is loaded
+                initializeRatingSystem(recipeId);
+            });
+        });
+
+        function loadDetail(recipe) {
+            const instList = document.getElementById('detail-instructions');
+            if (recipe.instructions && instList) {
+                // Filter out placeholder steps like "step 1", "step 2"
+                const filteredSteps = recipe.instructions.filter(step => {
+                    const cleaned = step.replace(/^\d+\.\s*/, '').trim().toLowerCase();
+                    return !cleaned.match(/^step\s+\d+:?$/);
+                });
+                // Format with h3 headers
+                instList.innerHTML = filteredSteps.map((step, index) => {
+                    const cleanStep = step.replace(/^\d+\.\s*/, '').trim();
+                    return `<h3 class="h4 font-serif fw-bold mt-4 mb-2">Step ${index + 1}:</h3><p>${cleanStep}</p>`;
+                }).join('');
+            }
+        }
+
+        function initializeRatingSystem(recipeId) {
+            const ratingContainer = document.getElementById('rating-container');
+            const starRating = document.getElementById('star-rating');
+            const avgRating = document.getElementById('avg-rating');
+
+            if (!ratingContainer || !starRating || !avgRating) return;
+
+            ratingContainer.style.display = 'block';
+
+            // Load ratings from localStorage
+            const ratingsKey = 'mithai_ratings';
+            const ratings = JSON.parse(localStorage.getItem(ratingsKey)) || {};
+            const userRating = parseInt(localStorage.getItem('mithai_rating_' + recipeId)) || 0;
+
+            function renderStars(selected) {
+                starRating.innerHTML = '';
+                for (let i = 1; i <= 5; i++) {
+                    const star = document.createElement('span');
+                    star.innerHTML = i <= selected ? '&#9733;' : '&#9734;';
+                    star.style.fontSize = '2rem';
+                    star.style.cursor = 'pointer';
+                    star.style.color = i <= selected ? '#b34700' : '#666666';
+                    star.style.marginRight = '0.25rem';
+                    star.setAttribute('aria-label', i + ' star');
+                    star.setAttribute('role', 'button');
+                    star.setAttribute('tabindex', '0');
+                    star.dataset.value = i;
+
+                    star.addEventListener('click', function () {
+                        const val = parseInt(this.dataset.value);
+
+                        // Update user's rating (replaces old rating if exists)
+                        localStorage.setItem('mithai_rating_' + recipeId, val);
+
+                        // Store as object with user's rating, not as array
+                        if (!ratings[recipeId]) {
+                            ratings[recipeId] = val;
+                        } else {
+                            ratings[recipeId] = val;
+                        }
+                        localStorage.setItem(ratingsKey, JSON.stringify(ratings));
+
+                        renderStars(val);
+                        renderAvg();
+                    });
+
+                    star.addEventListener('keydown', function (e) {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            this.click();
+                        }
+                    });
+
+                    starRating.appendChild(star);
+                }
+            }
+
+            function renderAvg() {
+                // Get all ratings from all users
+                const allRatings = Object.values(ratings).filter(r => typeof r === 'number');
+                if (allRatings.length === 0) {
+                    avgRating.textContent = 'No ratings yet';
+                } else {
+                    const avg = (allRatings.reduce((a, b) => a + b, 0) / allRatings.length).toFixed(1);
+                    avgRating.textContent = `Average: ${avg}/5.0 (${allRatings.length} ${allRatings.length === 1 ? 'vote' : 'votes'})`;
+                }
+            }
+
+            renderStars(userRating);
+            renderAvg();
+        }
+
+        let currentStep = 0;
+        let recipeSteps = [];
+        let cookingModal = null;
+
+        function initStepMode(instructions) {
+            // Filter out placeholder steps
+            const filteredSteps = instructions.filter(step => {
+                const cleaned = step.replace(/^\d+\.\s*/, '').trim().toLowerCase();
+                return !cleaned.match(/^step\s+\d+:?$/);
+            });
+
+            // Strip numbers and create cleaned array
+            recipeSteps = filteredSteps.map(step => {
+                return step.replace(/^\d+\.\s*/, '').trim();
+            });
+
+            currentStep = 0;
+        }
+
+        function startCookingMode() {
+            const params = new URLSearchParams(window.location.search);
+            const recipeId = parseInt(params.get('id'));
+            const recipes = JSON.parse(localStorage.getItem('mithai_recipes')) || JSON.parse(localStorage.getItem('mithai-recipes')) || [];
+            const recipe = recipes.find(r => r.id === recipeId);
+
+            if (!recipe || !recipe.instructions || recipe.instructions.length === 0) {
+                alert('No instructions available for this recipe.');
+                return;
+            }
+
+            // Initialize and filter steps
+            initStepMode(recipe.instructions);
+
+            if (recipeSteps.length === 0) {
+                alert('No valid instructions found for this recipe.');
+                return;
+            }
+
+            currentStep = 0;
+
+            if (!cookingModal) {
+                cookingModal = new bootstrap.Modal(document.getElementById('cookingModal'));
+            }
+
+            updateCookingStep();
+            cookingModal.show();
+        }
+
+        function updateCookingStep() {
+            const stepCounter = document.getElementById('stepCounter');
+            const stepContent = document.getElementById('stepContent');
+            const prevBtn = document.getElementById('prevStepBtn');
+            const nextBtn = document.getElementById('nextStepBtn');
+
+            stepCounter.textContent = `Step ${currentStep + 1} of ${recipeSteps.length}`;
+            stepContent.textContent = recipeSteps[currentStep];
+
+            prevBtn.disabled = currentStep === 0;
+
+            if (currentStep === recipeSteps.length - 1) {
+                nextBtn.innerHTML = '<i class="fas fa-check me-1"></i> Done';
+                nextBtn.onclick = function () {
+                    cookingModal.hide();
+                };
+            } else {
+                nextBtn.innerHTML = 'Next <i class="fas fa-arrow-right ms-1"></i>';
+                nextBtn.onclick = nextStep;
+            }
+        }
+
+        function nextStep() {
+            if (currentStep < recipeSteps.length - 1) {
+                currentStep++;
+                updateCookingStep();
+            }
+        }
+
+        function previousStep() {
+            if (currentStep > 0) {
+                currentStep--;
+                updateCookingStep();
+            }
+        }
+
+    </script>
+</body>
+
+</html>
