@@ -9,7 +9,7 @@ Complete the assignment as specified on [the inter-section website](https://w3.c
 
 ## Milestone 2
 
-Complete the assignment as specified on [the inter-section website](https://w3.cs.jmu.edu/cs343/f25/project/), but all of your source code (which should have no javascript at this point!) belongs in the `src/` directory
+Complete the assignment as specified on [the inter-section website](https://w3.cs.jmu.edu/cs343/f25/project/), but all of your source code (which should have no javascript at this point!) belongs in the `docs/` directory
 
 ## Milestone 3
-Complete the assignment as specified on [the inter-section website](https://w3.cs.jmu.edu/cs343/f25/project/), but all of your source code (which should now include javascript) belongs in the `src/` directory
+Complete the assignment as specified on [the inter-section website](https://w3.cs.jmu.edu/cs343/f25/project/), but all of your source code (which should now include javascript) belongs in the `docs/` directory
