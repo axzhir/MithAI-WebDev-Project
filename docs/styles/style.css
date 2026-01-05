@@ -1,0 +1,298 @@
+/* Color Variables */
+:root {
+    --primary-orange: #b34700;
+    --primary-orange-rgb: 179,71,0;
+    --hover-orange: #8c3900;
+    --stone-dark: #1c1917;
+    --stone-light: #f5f5f4;
+    --pak-green: #01411c; /* Custom theme color */
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+.font-serif {
+    font-family: Georgia, 'Times New Roman', Times, serif;
+}
+
+.text-orange {
+    color: var(--primary-orange) !important;
+}
+
+.bg-orange {
+    background-color: var(--primary-orange) !important;
+}
+
+.btn-orange {
+    background-color: var(--primary-orange) !important;
+    border-color: var(--primary-orange) !important;
+    color: white !important;
+}
+
+.btn-orange:hover {
+    background-color: var(--hover-orange) !important;
+    border-color: var(--hover-orange) !important;
+    color: white !important;
+}
+
+.btn-outline-orange {
+    color: var(--primary-orange) !important;
+    border-color: var(--primary-orange) !important;
+}
+
+.btn-outline-orange:hover {
+    background-color: var(--primary-orange) !important;
+    border-color: var(--primary-orange) !important;
+    color: white !important;
+}
+
+/* Custom Button Hover Effects */
+.hover-orange:hover {
+    background-color: var(--primary-orange) !important;
+    border-color: var(--primary-orange) !important;
+    color: white;
+}
+
+/* Card Styling */
+.recipe-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid #e7e5e4;
+    border-radius: 1rem;
+    overflow: hidden;
+    background: white;
+    position: relative;
+}
+
+.recipe-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+
+/* Small heading for sidebar sections */
+.sidebar-heading {
+    font-size: 1.25rem;
+}
+
+/* Improve contrast for helper text in filters */
+.form-text {
+    color: #6c757d !important;
+}
+
+/* Darken muted text for better contrast (WCAG AA) */
+.text-muted {
+    color: #495057 !important;
+}
+
+/* Improve contrast for links in light backgrounds (but not buttons) */
+a:not(.btn) {
+    color: #0a3e8c !important;
+}
+
+a:not(.btn):hover {
+    color: #052c65 !important;
+}
+
+/* Ensure button text has proper contrast - only for dark/filled buttons */
+.btn-dark,
+.btn-orange,
+.btn-primary,
+.btn-secondary,
+.btn-success,
+.btn-danger,
+.btn-warning,
+.btn-info {
+    color: white !important;
+}
+
+/* Outline buttons should have dark text, not white */
+.btn-outline-dark {
+    color: #212529 !important;
+}
+
+.btn-outline-dark:hover {
+    color: white !important;
+}
+
+/* Badge Contrast Fix - Ensure all badges have sufficient contrast */
+.badge {
+    color: #ffffff !important;
+    font-weight: 600;
+    background-color: #212529; /* ADD THIS: Sets a default black background */
+}
+
+/* ADD THIS: Forces "light" badges to be black so the white text is visible */
+.badge.bg-light {
+    background-color: #212529 !important;
+    color: #ffffff !important;
+}
+
+.badge.bg-secondary {
+    background-color: #495057 !important;
+    color: #ffffff !important;
+}
+
+.badge.bg-secondary {
+    background-color: #495057 !important;
+    color: #ffffff !important;
+}
+
+.badge.bg-info {
+    background-color: #0d7cc0 !important;
+    color: #ffffff !important;
+}
+
+.badge.bg-secondary:hover,
+.badge.bg-info:hover {
+    opacity: 0.9;
+}
+
+.recipe-intro {
+    max-width: 600px;
+}
+
+.recipe-header {
+    min-height: 300px;
+}
+
+.create-form-container {
+    max-width: 800px;
+}
+
+.about-container {
+    max-width: 800px;
+}
+
+/* Filter Button Styling */
+.list-group-item-action {
+    cursor: pointer;
+}
+
+.list-group-item-action {
+    transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+/* "All" buttons should be bold orange when active */
+.list-group-item-action.all-filter.active {
+    background-color: var(--primary-orange);
+    color: #fff;
+    border-color: var(--primary-orange);
+}
+
+/* Other selected filters get a light orange background and orange text */
+.list-group-item-action.active:not(.all-filter) {
+    background-color: rgba(var(--primary-orange-rgb), 0.12);
+    color: var(--primary-orange);
+    border-color: transparent;
+}
+
+.list-group-item-action.active:not(.all-filter):hover {
+    background-color: rgba(var(--primary-orange-rgb), 0.16);
+}
+
+/* Pakistan theme removed — site uses default orange accents. */
+
+/* --- REQUIREMENT: Media Queries --- */
+
+/* Tablet Layout (min-width: 768px) */
+@media (min-width: 768px) {
+    .container {
+        max-width: 720px;
+    }
+}
+
+/* Large Desktop Layout (min-width: 992px) */
+@media (min-width: 992px) {
+    .container {
+        max-width: 960px;
+    }
+}
+
+/* Ensure card images behave predictably across browsers */
+.card-img-top {
+    width: 100%;
+    display: block;
+    object-fit: cover;
+}
+
+/* Ensure Start Cooking button is above any stretched links */
+#start-cooking {
+    position: relative;
+    z-index: 10;
+}
+
+/* Prevent stretched-link from extending beyond card boundaries */
+.recipe-card {
+    position: relative;
+}
+
+.recipe-card .stretched-link::after {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 1;
+    content: "";
+}
+
+/* Ensure clickable elements on recipe detail page work properly */
+.recipe-header, .tab-content, .container {
+    position: relative;
+    z-index: auto;
+}
+
+/* Step-by-step cooking mode content */
+.step-content {
+    min-height: 150px;
+    font-size: 1.25rem;
+}
+
+/* Recipe detail image */
+.recipe-detail-img {
+    max-height: 320px;
+    object-fit: cover;
+}
+
+/* Accessible light text on dark backgrounds */
+.text-light-accessible {
+    color: #adb5bd !important;
+}
+
+/* Accessible orange on white backgrounds (darker for better contrast) */
+.text-orange-dark {
+    color: #8b3500 !important;
+}
+
+/* Accessible orange on dark backgrounds (lighter/more saturated for better contrast) */
+.text-orange-light {
+    color: #ff8c42 !important;
+}
+
+/* Accessible footer text */
+.text-footer {
+    color: #495057 !important;
+}
+
+/* Links on dark backgrounds should stay white */
+.bg-dark a:not(.btn),
+.card.bg-dark a:not(.btn) {
+    color: #ffffff !important;
+}
+
+.bg-dark a:not(.btn):hover,
+.card.bg-dark a:not(.btn):hover {
+    color: #ff8c42 !important;
+}
+
+/* Improve placeholder contrast for accessibility */
+.form-control::placeholder,
+.form-select::placeholder {
+    color: #6c757d !important;
+    opacity: 1;
+}
+
+/* Step-by-Step Cooking Mode */
+#step-content {
+    min-height: 100px;
+}
